@@ -14,15 +14,11 @@ namespace ClassProject {
     const Node Manager::FALSE_NODE = {.label = "0", .data = {.low = 0, .high = 0, .topVar = Manager::FALSE_ADDRESS}};
     const Node Manager::TRUE_NODE =  {.label = "1", .data = {.low = 1, .high = 1, .topVar = Manager::TRUE_ADDRESS}};
 
-    BDD_ID Manager::createVar(const std::string &label){}
-
     std::string Manager::getTopVarName(const BDD_ID &root){}
 
     void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root){}
 
     void Manager::findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root){}
-
-    size_t Manager::uniqueTableSize(){}    
     
     /**
     * @brief Manager class standard constructor
@@ -44,6 +40,10 @@ namespace ClassProject {
         for(size_t i=0; i < nodes.size(); i++){                
             unique_table.insert({nodes[i].data, i});                
         }  
+    }
+
+    size_t Manager::uniqueTableSize(){
+        return unique_table.size();
     }
 
     /**
@@ -81,10 +81,34 @@ namespace ClassProject {
      * @brief Checks if a given node is a variable
      * @author Victor Herbert
      * 
-     * @return bool stating if the node is variable
+     * @return bool stating if the node is avariable
      */
     bool Manager::isVariable(BDD_ID x){
-        return !isConstant(x);//FIXME
+        return nodes[x].isVariable;
+    }
+
+    /**
+     * @brief Checks if a given node is an expression
+     * @author Victor Herbert
+     * 
+     * @return bool stating if the node is a expression
+     */
+    bool Manager::isExpression(BDD_ID x){
+        return !isConstant(x) && !isVariable(x);
+    }
+
+    /**
+    * @brief Creates a variable in the tree
+    * @author Victor Herbert
+    * 
+    * @return BDD_ID ID of the variable node
+    */
+    BDD_ID Manager::createVar(const std::string &label){
+        return addNode({
+            .label=label,
+            .isVariable=true,
+            .data={.low=FALSE_ADDRESS, .high=TRUE_ADDRESS, .topVar=nodes.size()}
+        });
     }
 
     /**
@@ -94,12 +118,12 @@ namespace ClassProject {
      * @param data of the to be added node
      * @return BDD_ID of the added node
      */
-    BDD_ID Manager::add_unique_table(NodeData data){
-        if(unique_table.find(data) != unique_table.end()){
-            nodes.push_back(Node{.data=data});
-            unique_table[data] = nodes.size()-1;
+    BDD_ID Manager::addNode(Node node){
+        if(unique_table.find(node.data) == unique_table.end()){
+            nodes.push_back(node);
+            unique_table[node.data] = nodes.size()-1;
         }
-        return unique_table[data];
+        return unique_table[node.data];
     }
 
     /**
@@ -129,7 +153,7 @@ namespace ClassProject {
                 computed_table[nodeData] = high;
             }
             else{
-                BDD_ID result = add_unique_table({.low=low, .high=high, .topVar=top});
+                BDD_ID result = addNode({.data={.low=low, .high=high, .topVar=top}});
                 computed_table[nodeData] = result;
             }
         }
@@ -335,6 +359,17 @@ namespace ClassProject {
     */
     BDD_ID Manager::high(BDD_ID f){
         return nodes[f].data.high;
+    }
+
+    /**
+    * @brief returns the NodeData of the low of the given node f
+    * @author Victor Herbert
+    * 
+    * @param f ID of node representing function f
+    * @return BDD_ID ID of top variable node
+    */
+    NodeData Manager::nodeData(BDD_ID f){
+        return nodes[f].data;
     }
 
     /**
