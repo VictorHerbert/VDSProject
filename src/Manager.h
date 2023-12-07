@@ -9,7 +9,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
-#include "gtest/gtest.h"
+//#include "gtest/gtest.h"
 // #include "Tests.h"
 
 namespace ClassProject {
@@ -34,6 +34,7 @@ namespace ClassProject {
 
     struct Node{
         std::string label;
+        bool isVariable = false;
         NodeData data;
 
         bool operator== (const Node &other) const {
@@ -55,7 +56,7 @@ namespace ClassProject {
         const static Node FALSE_NODE;
         const static Node TRUE_NODE;
 
-        BDD_ID add_unique_table(NodeData data);
+        BDD_ID addNode(Node data);
         void bfs(const BDD_ID root, std::vector<BDD_ID> &order, std::vector<bool> &marc);        
 
     public:
@@ -73,9 +74,13 @@ namespace ClassProject {
 
         bool isVariable(BDD_ID x);
 
+        bool isExpression(BDD_ID x);
+
         BDD_ID topVar(BDD_ID f);
         
         BDD_ID topVar(BDD_ID f, BDD_ID g);
+
+        NodeData nodeData(BDD_ID id);
 
         BDD_ID high(BDD_ID f);
 
