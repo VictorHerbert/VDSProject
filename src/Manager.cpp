@@ -1,6 +1,6 @@
 #include "Manager.h"
 #include <stdexcept>
-#include <iostream> //FIXME check final lib dependencies
+#include <fstream>
 
 namespace ClassProject {
 
@@ -224,12 +224,9 @@ namespace ClassProject {
      * 
      * @param a operand 
      * @return BDD_ID of the node which encapsulates the operation
-     * 
-     * //TODO
      */
-    BDD_ID Manager::neg(BDD_ID a){    
-        //TODO
-        BDD_ID id;
+    BDD_ID Manager::neg(BDD_ID a){        
+        BDD_ID id = ite(a, 0, 1);
         if(nodes[id].label == "")
             nodes[id].label = "~(" + nodes[a].label + ")";
         return id;
@@ -310,21 +307,25 @@ namespace ClassProject {
      * 
      * Creates a .svg diagram of the desired subtree
      */
-    void Manager::visualizeBDD(std::string filepath, BDD_ID &root){
-        //TODO implement filewrite
+    void Manager::visualizeBDD(std::string filepath, BDD_ID &root){     
+        std::ofstream file;
+        file.open(filepath);
+
         std::vector<bool> marc (uniqueTableSize(), false);
         std::vector<BDD_ID> order;
         order.reserve(uniqueTableSize());
 
         bfs(root, order, marc);
 
-        std::cout << "stateDiagram-v2\n";
+        file << "```mermaid\nstateDiagram-v2\n";
 
         for (BDD_ID node : order){
-            std::cout << nodes[node].label << " --> " << nodes[nodes[node].data.low].label << ": 0\n";
-            std::cout << nodes[node].label << " --> " << nodes[nodes[node].data.high].label << ": 1\n";
+            file << nodes[node].label << " --> " << nodes[nodes[node].data.low].label << ": 0\n";
+            file << nodes[node].label << " --> " << nodes[nodes[node].data.high].label << ": 1\n";
         }
-        std::cout << "classDef leaf fill:white\nclass 1 leaf\nclass 0 leaf";
+        file << "classDef leaf fill:white\nclass 1 leaf\nclass 0 leaf\n```";
+
+        file.close();
     }
 
 
