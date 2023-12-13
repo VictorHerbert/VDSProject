@@ -23,6 +23,24 @@ namespace ClassProject {
         }
     };
 
+    class VariablesTest : public testing::Test {
+
+        protected:
+
+        Manager testObj;
+
+        void SetUp() override {
+            testObj = Manager({
+                {.label = "0",                      .data = {.low = 0, .high = 0, .topVar = 0}},                
+                {.label = "1",                      .data = {.low = 1, .high = 1, .topVar = 1}},
+                {.label = "a", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 2}},
+                {.label = "b", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 3}},
+                {.label = "c", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 4}},
+                {.label = "d", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 5}}                
+            });           
+        }
+    };
+
     class FunctionsTest : public testing::Test {
 
         protected:
@@ -37,8 +55,8 @@ namespace ClassProject {
                 {.label = "b", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 3}},
                 {.label = "c", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 4}},
                 {.label = "d", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 5}},
-                {.label = "a+b",                    .data = {.low = 1, .high = 3, .topVar = 2}},
-                {.label = "c*d",                    .data = {.low = 5, .high = 0, .topVar = 4}}
+                {.label = "a+b",                    .data = {.low = 3, .high = 1, .topVar = 2}},
+                {.label = "c*d",                    .data = {.low = 0, .high = 5, .topVar = 4}}
             });           
         }
     };
@@ -112,6 +130,245 @@ namespace ClassProject {
         ASSERT_EQ(testObj.high(0), testObj.coFactorTrue(0)); // constant node
         ASSERT_EQ(testObj.high(2), testObj.coFactorTrue(2)); // variable
         ASSERT_EQ(testObj.high(5), testObj.coFactorTrue(5)); // expression
+    }
+
+    TEST_F(VariablesTest, And2Constants){
+        BDD_ID id_n, id_a = 2;
+        id_n = testObj.and2(0, 0);
+        ASSERT_EQ(id_n, 0); 
+
+        id_n = testObj.and2(0, 1);
+        ASSERT_EQ(id_n, 0); 
+
+        id_n = testObj.and2(1, 0);        
+        ASSERT_EQ(id_n, 0); 
+
+        id_n = testObj.and2(1, 1);        
+        ASSERT_EQ(id_n, 1);
+
+        id_n = testObj.and2(id_a, 1);        
+        ASSERT_EQ(id_n, id_a);  
+
+        id_n = testObj.and2(1, id_a);        
+        ASSERT_EQ(id_n, id_a);  
+
+        id_n = testObj.and2(id_a, 0);        
+        ASSERT_EQ(id_n, 0);  
+
+        id_n = testObj.and2(0, id_a);        
+        ASSERT_EQ(id_n, 0); 
+    }    
+
+    TEST_F(VariablesTest, And2Variables){
+        BDD_ID id_n, id_a = 2, id_b = 3;
+        id_n = testObj.and2(id_a, id_b);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=0, .high=id_b, .topVar=id_a}));        
+        
+        id_n = testObj.and2(id_b, id_a);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=0, .high=id_b, .topVar=id_a}));        
+    } 
+
+    TEST_F(VariablesTest, Or2Constants){
+        BDD_ID id_n, id_a = 2;
+        id_n = testObj.or2(0, 0);
+        ASSERT_EQ(id_n, 0); 
+
+        id_n = testObj.or2(0, 1);
+        ASSERT_EQ(id_n, 1); 
+
+        id_n = testObj.or2(1, 0);        
+        ASSERT_EQ(id_n, 1); 
+
+        id_n = testObj.or2(1, 1);        
+        ASSERT_EQ(id_n, 1);
+
+        id_n = testObj.or2(id_a, 1);        
+        ASSERT_EQ(id_n, 1);  
+
+        id_n = testObj.or2(1, id_a);        
+        ASSERT_EQ(id_n, 1);  
+
+        id_n = testObj.or2(id_a, 0);        
+        ASSERT_EQ(id_n, id_a);  
+
+        id_n = testObj.or2(0, id_a);        
+        ASSERT_EQ(id_n, id_a); 
+    }    
+
+    TEST_F(VariablesTest, Or2Variables){
+        BDD_ID id_n, id_a = 2, id_b = 3;
+        id_n = testObj.or2(id_a, id_b);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=id_b, .high=1, .topVar=id_a}));                
+        
+        id_n = testObj.or2(id_b, id_a);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=id_b, .high=1, .topVar=id_a}));        
+    }
+
+    TEST_F(BasicTest, NegConstants){
+        BDD_ID id_n;
+        id_n = testObj.neg(0);
+        ASSERT_EQ(id_n, 1); 
+
+        id_n = testObj.neg(1);
+        ASSERT_EQ(id_n, 0); 
+    }    
+
+    TEST_F(VariablesTest, NegVariable){
+        BDD_ID id_n, id_a = 2;
+        id_n = testObj.neg(id_a);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=1, .high=0, .topVar=id_a}));                
+    }
+
+    TEST_F(VariablesTest, Xor2Constants){
+        BDD_ID id_n, id_m, id_a = 2;
+        id_n = testObj.xor2(0, 0);
+        ASSERT_EQ(id_n, 0); 
+
+        id_n = testObj.xor2(0, 1);
+        ASSERT_EQ(id_n, 1); 
+
+        id_n = testObj.xor2(1, 0);        
+        ASSERT_EQ(id_n, 1); 
+
+        id_n = testObj.xor2(1, 1);        
+        ASSERT_EQ(id_n, 0);
+
+        id_n = testObj.xor2(id_a, 1);   
+        id_m = testObj.neg(id_a);             
+        ASSERT_EQ(id_n, id_m); 
+
+        id_n = testObj.xor2(1, id_a);        
+        id_m = testObj.neg(id_a);             
+        ASSERT_EQ(id_n, id_m); 
+
+        id_n = testObj.xor2(id_a, 0);        
+        ASSERT_EQ(id_n, id_a);  
+
+        id_n = testObj.xor2(0, id_a);        
+        ASSERT_EQ(id_n, id_a); 
+    }    
+
+    TEST_F(VariablesTest, Xor2Variables){
+        BDD_ID id_n, id_a = 2, id_b = 3;
+        id_n = testObj.xor2(id_a, id_b);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=id_b, .high=testObj.neg(id_b), .topVar=id_a}));                
+        
+        id_n = testObj.xor2(id_b, id_a);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=id_b, .high=testObj.neg(id_b), .topVar=id_a}));        
+    }
+
+    TEST_F(VariablesTest, Nand2Constants){
+        BDD_ID id_n, id_m, id_a = 2;
+        id_n = testObj.nand2(0, 0);
+        ASSERT_EQ(id_n, 1); 
+
+        id_n = testObj.nand2(0, 1);
+        ASSERT_EQ(id_n, 1); 
+
+        id_n = testObj.nand2(1, 0);        
+        ASSERT_EQ(id_n, 1); 
+
+        id_n = testObj.nand2(1, 1);        
+        ASSERT_EQ(id_n, 0);
+
+        id_n = testObj.nand2(id_a, 1);   
+        id_m = testObj.neg(id_a);             
+        ASSERT_EQ(id_n, id_m); 
+
+        id_n = testObj.nand2(1, id_a);        
+        id_m = testObj.neg(id_a);             
+        ASSERT_EQ(id_n, id_m); 
+
+        id_n = testObj.nand2(id_a, 0);        
+        ASSERT_EQ(id_n, 1);  
+
+        id_n = testObj.nand2(0, id_a);        
+        ASSERT_EQ(id_n, 1); 
+    }    
+
+    TEST_F(VariablesTest, Nand2Variables){
+        BDD_ID id_n, id_a = 2, id_b = 3;
+        id_n = testObj.nand2(id_a, id_b);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=1, .high=testObj.neg(id_b), .topVar=id_a}));                
+        
+        id_n = testObj.nand2(id_b, id_a);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=1, .high=testObj.neg(id_b), .topVar=id_a}));        
+    }
+
+    TEST_F(VariablesTest, Nor2Constants){
+        BDD_ID id_n, id_m, id_a = 2;
+        id_n = testObj.nor2(0, 0);
+        ASSERT_EQ(id_n, 1); 
+
+        id_n = testObj.nor2(0, 1);
+        ASSERT_EQ(id_n, 0); 
+
+        id_n = testObj.nor2(1, 0);        
+        ASSERT_EQ(id_n, 0); 
+
+        id_n = testObj.nor2(1, 1);        
+        ASSERT_EQ(id_n, 0);
+
+        id_n = testObj.nor2(id_a, 0);   
+        id_m = testObj.neg(id_a);             
+        ASSERT_EQ(id_n, id_m); 
+
+        id_n = testObj.nor2(0, id_a);        
+        id_m = testObj.neg(id_a);             
+        ASSERT_EQ(id_n, id_m); 
+
+        id_n = testObj.nor2(id_a, 1);        
+        ASSERT_EQ(id_n, 0);  
+
+        id_n = testObj.nor2(1, id_a);        
+        ASSERT_EQ(id_n, 0); 
+    }    
+
+    TEST_F(VariablesTest, Nor2Variables){
+        BDD_ID id_n, id_a = 2, id_b = 3;
+        id_n = testObj.nor2(id_a, id_b);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=testObj.neg(id_b), .high=0, .topVar=id_a}));                
+        
+        id_n = testObj.nor2(id_b, id_a);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=testObj.neg(id_b), .high=0, .topVar=id_a}));        
+    }
+
+    TEST_F(VariablesTest, Xnor2Constants){
+        BDD_ID id_n, id_m, id_a = 2;
+        id_n = testObj.xnor2(0, 0);
+        ASSERT_EQ(id_n, 1); 
+
+        id_n = testObj.xnor2(0, 1);
+        ASSERT_EQ(id_n, 0); 
+
+        id_n = testObj.xnor2(1, 0);        
+        ASSERT_EQ(id_n, 0); 
+
+        id_n = testObj.xnor2(1, 1);        
+        ASSERT_EQ(id_n, 1);
+
+        id_n = testObj.xnor2(id_a, 0);   
+        id_m = testObj.neg(id_a);             
+        ASSERT_EQ(id_n, id_m); 
+
+        id_n = testObj.xnor2(0, id_a);        
+        id_m = testObj.neg(id_a);             
+        ASSERT_EQ(id_n, id_m); 
+
+        id_n = testObj.xnor2(id_a, 1);        
+        ASSERT_EQ(id_n, id_a);  
+
+        id_n = testObj.xnor2(1, id_a);        
+        ASSERT_EQ(id_n, id_a); 
+    }    
+
+    TEST_F(VariablesTest, Xnor2Variables){
+        BDD_ID id_n, id_a = 2, id_b = 3;
+        id_n = testObj.xnor2(id_a, id_b);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=testObj.neg(id_b), .high=id_b, .topVar=id_a}));                
+        
+        id_n = testObj.xnor2(id_b, id_a);
+        ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=testObj.neg(id_b), .high=id_b, .topVar=id_a}));        
     }
 }
 
