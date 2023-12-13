@@ -9,6 +9,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <unordered_set>
 //#include "gtest/gtest.h"
 // #include "Tests.h"
 
@@ -58,6 +59,9 @@ namespace ClassProject {
 
         BDD_ID addNode(Node data);
         void bfs(const BDD_ID root, std::vector<BDD_ID> &order, std::vector<bool> &marc);        
+
+        void findNodesDFS(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root, std::unordered_set<BDD_ID> &discovered);
+        void findVarsDFS(const BDD_ID &root, std::set<BDD_ID> &vars_of_root, std::unordered_set<BDD_ID> &discovered);
 
     public:
         

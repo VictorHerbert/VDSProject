@@ -1,6 +1,7 @@
 #include "Manager.h"
 #include <stdexcept>
 #include <fstream>
+#include <unordered_set>
 
 namespace ClassProject {
 
@@ -12,13 +13,7 @@ namespace ClassProject {
     const BDD_ID Manager::TRUE_ADDRESS = 1;
 
     const Node Manager::FALSE_NODE = {.label = "0", .data = {.low = 0, .high = 0, .topVar = Manager::FALSE_ADDRESS}};
-    const Node Manager::TRUE_NODE =  {.label = "1", .data = {.low = 1, .high = 1, .topVar = Manager::TRUE_ADDRESS}};
-
-    std::string Manager::getTopVarName(const BDD_ID &root){}
-
-    void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root){}
-
-    void Manager::findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root){}
+    const Node Manager::TRUE_NODE =  {.label = "1", .data = {.low = 1, .high = 1, .topVar = Manager::TRUE_ADDRESS}};        
     
     /**
     * @brief Manager class standard constructor
@@ -30,6 +25,14 @@ namespace ClassProject {
         nodes = {FALSE_NODE, TRUE_NODE};
     }
 
+    /**
+     * @brief Construct a new Manager:: Manager object
+     * 
+     * Takes and already constructed set of nodes and applies validation 
+     * on it to ensure its consistency 
+     * 
+     * @param nodes 
+     */
     Manager::Manager(std::vector<Node> nodes) : nodes(nodes){        
         if(!(nodes[0] == FALSE_NODE) || !(nodes[1] == TRUE_NODE)){
             throw std::invalid_argument("true and false nodes are invalid");
@@ -42,6 +45,11 @@ namespace ClassProject {
         }  
     }
 
+    /**
+     * @brief returns the number of nodes in the unique table
+     * 
+     * @return size_t 
+     */
     size_t Manager::uniqueTableSize(){
         return unique_table.size();
     }
@@ -174,6 +182,16 @@ namespace ClassProject {
     bool Manager::updateNodeLabel(BDD_ID id, BDD_ID a, BDD_ID b, std::string op){
         if(nodes[id].label == "")
             nodes[id].label = op + "(" + nodes[a].label + "," + nodes[b].label + ")";
+    }
+
+    /**
+     * @brief returns the label of the top variable of root
+     * 
+     * @param root 
+     * @return std::string 
+     */
+    std::string Manager::getTopVarName(const BDD_ID &root){ 
+        return nodes[topVar(root)].label;
     }
 
     /**
@@ -459,4 +477,56 @@ namespace ClassProject {
         return coFactorFalse(f, topVar(f));
     }
 
+    /**
+     * @brief returns the set of all nodes that are reachable from root node
+     * including itself
+     * 
+     * uses DFS algorithm
+     * 
+     * @param root 
+     * @param nodes_of_root 
+     */
+    void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root){        
+        std::unordered_set<BDD_ID> discovered = std::unordered_set<BDD_ID>();        
+        findNodesDFS(root, nodes_of_root, discovered);
+    }
+
+    void Manager::findNodesDFS(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root, std::unordered_set<BDD_ID> &discovered){        
+
+        if((discovered.count(root) != 0) || isConstant(root)){
+            return;
+        }
+
+        discovered.insert(root);
+        nodes_of_root.insert(root);
+
+        findNodesDFS(low(root), nodes_of_root, discovered);
+        findNodesDFS(high(root), nodes_of_root, discovered);
+    }
+
+    /**
+     * @brief 
+     * 
+     * @param root 
+     * @param vars_of_root 
+     */
+    void Manager::findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root){
+        std::unordered_set<BDD_ID> discovered = std::unordered_set<BDD_ID>();        
+        findNodesDFS(root, vars_of_root, discovered);
+    }
+
+    void Manager::findVarsDFS(const BDD_ID &root, std::set<BDD_ID> &vars_of_root, std::unordered_set<BDD_ID> &discovered){        
+
+        if((discovered.count(root) != 0) || isConstant(root)){
+            return;
+        }
+
+        if(isVariable(root)){
+            vars_of_root.insert(root);
+        }
+        discovered.insert(root);
+
+        findVarsDFS(low(root), vars_of_root, discovered);
+        findVarsDFS(high(root), vars_of_root, discovered);
+    }
 }
