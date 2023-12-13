@@ -79,7 +79,7 @@ namespace ClassProject {
         ASSERT_EQ(id_true, 1);        
     }
 
-    TEST_F(BasicTest, CreateVarNew){        
+    TEST_F(BasicTest, CreateVar){        
         BDD_ID id_a = testObj.createVar("a");
         BDD_ID id_b = testObj.createVar("b");        
 
@@ -90,14 +90,14 @@ namespace ClassProject {
         ASSERT_EQ(testObj.nodeData(id_b), (NodeData{.low=0, .high=1, .topVar=id_b}));
     }
 
-    TEST_F(FunctionsTest, Constant){
+    TEST_F(FunctionsTest, isConstant){
         ASSERT_EQ(testObj.isConstant(0), true);  // false node
         ASSERT_EQ(testObj.isConstant(1), true);  // true node
         ASSERT_EQ(testObj.isConstant(2), false); // variable node (a)
         ASSERT_EQ(testObj.isConstant(6), false); // function node (a+b)
     }
 
-    TEST_F(FunctionsTest, Variable){
+    TEST_F(FunctionsTest, isVariable){
         ASSERT_EQ(testObj.isVariable(0), false);  // false node
         ASSERT_EQ(testObj.isVariable(1), false);  // true node
         ASSERT_EQ(testObj.isVariable(2), true);   // variable node (a)
