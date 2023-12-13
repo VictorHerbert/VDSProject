@@ -105,6 +105,35 @@ namespace ClassProject {
         ASSERT_EQ(testObj.isVariable(6), false);  // function node (a+b)
     }
 
+    TEST_F(FunctionsTest, isExpression){
+        ASSERT_EQ(testObj.isExpression(0), false);  // false node
+        ASSERT_EQ(testObj.isExpression(1), false);  // true node
+        ASSERT_EQ(testObj.isExpression(2), false);   // variable node (a)
+        ASSERT_EQ(testObj.isExpression(3), false);   // variable node (b)
+        ASSERT_EQ(testObj.isExpression(6), true);  // function node (a+b)
+        ASSERT_EQ(testObj.isExpression(7), true);  // function node (c*d)
+    }
+
+    TEST_F(BasicTest, UniqueTableSize){
+        ASSERT_EQ(testObj.uniqueTableSize(), 2);                 
+    }
+
+    TEST_F(VariablesTest, UniqueTableSize){
+        ASSERT_EQ(testObj.uniqueTableSize(), 6);                 
+    }
+
+    TEST_F(FunctionsTest, UniqueTableSize){
+        ASSERT_EQ(testObj.uniqueTableSize(), 8);                 
+    }    
+    
+    TEST_F(FunctionsTest, NodeDataReturn){
+        BDD_ID id_a = 2, id_b = 3, id_or_ab = 6;
+        ASSERT_EQ(testObj.nodeData(0), (NodeData{.low=testObj.low(0), .high=testObj.high(0), .topVar=testObj.topVar(0)}));                
+        ASSERT_EQ(testObj.nodeData(id_a), (NodeData{.low=testObj.low(id_a), .high=testObj.high(id_a), .topVar=testObj.topVar(id_a)}));                
+        ASSERT_EQ(testObj.nodeData(id_b), (NodeData{.low=testObj.low(id_b), .high=testObj.high(id_b), .topVar=testObj.topVar(id_b)}));                
+        ASSERT_EQ(testObj.nodeData(id_or_ab), (NodeData{.low=testObj.low(id_or_ab), .high=testObj.high(id_or_ab), .topVar=testObj.topVar(id_or_ab)}));                        
+    }
+
     TEST_F(FunctionsTest, IteTerminalCases){
         BDD_ID id_a = 2, id_b = 3;
         ASSERT_EQ(testObj.ite(1, id_a, id_b),    id_a);

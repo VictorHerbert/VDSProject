@@ -210,7 +210,7 @@ _Below is an example of how you can instruct your audience on installing and set
 | Function Name                       | Implemented | Tested | Person |
 |--------------------------------------|-------------|--------|-------|
 | OBDDManager()       |      [X]    |  [X]   | Victor |
-| OBDDManager(std::vector<Node> nodes)       |      [X]    |  []   | Victor |
+| OBDDManager(std::vector<Node> nodes)       |      [X]    |  []   | Kamel |
 | createVar(const std::string &label)       |      [X]    |  [X]   | Victor |
 | True()                                     |      [X]    |  [X]   | Victor|
 | False()                                    |      [X]    |  [X]   | Victor|
@@ -220,8 +220,8 @@ _Below is an example of how you can instruct your audience on installing and set
 | topVar(BDD_ID f)                           |      [X]    |  []   | Kamel |
 | low(BDD_ID f)                           |      [X]    |  []   | Kamel |
 | high(BDD_ID f)                           |      [X]    |  []   | Kamel |
-| nodeData(BDD_ID f)                           |      [X]    |  []   | Victor |
-| ite(BDD_ID i, BDD_ID t, BDD_ID e)          |      [X]    |  []   | Victor|
+| nodeData(BDD_ID f)                           |      [X]    |  [X]   | Victor |
+| ite(BDD_ID i, BDD_ID t, BDD_ID e)          |      [X]    |  [X]   | Victor|
 | coFactorTrue(BDD_ID f, BDD_ID x)          |      [X]    |  []   | Kamel |
 | coFactorFalse(BDD_ID f, BDD_ID x)    |      [X]    |  [X]   | Kamel|
 | coFactorTrue(BDD_ID f)               |      [X]    | [X]   | Kamel |
@@ -236,8 +236,8 @@ _Below is an example of how you can instruct your audience on installing and set
 | getTopVarName(const BDD_ID &root)    |      [ ]    |  [ ]   | Kamel |
 | findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) |  [ ] |  [ ]   | Kamel |
 | findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root)   | [ ] |  [ ]   | Kamel |
-| uniqueTableSize()                    |      [X]    |  [ ]   | Victor |
-| visualizeBDD(std::string filepath, BDD_ID &root) |      [X]    | [ ]   | Victor|
+| uniqueTableSize()                    |      [X]    |  [X]   | Victor |
+| visualizeBDD(std::string filepath, BDD_ID &root) |      [X]    | [-]   | Victor|
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
