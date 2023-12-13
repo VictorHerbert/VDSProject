@@ -209,30 +209,35 @@ _Below is an example of how you can instruct your audience on installing and set
 
 | Function Name                       | Implemented | Tested | Person |
 |--------------------------------------|-------------|--------|-------|
-| OBDDManager()       |      [ ]    |  [ ]   | Victor |
-| createVar(const std::string &label)       |      [ ]    |  [X]   | Victor |
-| True()                                     |      [ ]    |  [X]   | Victor|
-| False()                                    |      [ ]    |  [X]   | Victor|
-| isConstant(BDD_ID f)                       |      [ ]    |  [X]   | Victor|
-| isVariable(BDD_ID x)                       |      [ ]    |  [X]   | Victor|
-| topVar(BDD_ID f)                           |      [ ]    |  [X]   | Kamel |
-| ite(BDD_ID i, BDD_ID t, BDD_ID e)          |      [ ]    |  [ ]   | Victor|
-| coFactorTrue(BDD_ID f, BDD_ID x)          |      [ ]    |  [X]   | Kamel |
-| coFactorFalse(BDD_ID f, BDD_ID x)    |      [ ]    |  [X]   | Kamel|
-| coFactorTrue(BDD_ID f)               |      [ ]    | [X]   | Kamel |
-| coFactorFalse(BDD_ID f)              |      [ ]    |  [X]   | Kamel |
-| and2(BDD_ID a, BDD_ID b)             |      [ ]    |  [ ]   | Victor|
-| or2(BDD_ID a, BDD_ID b)              |      [ ]    |  [ ]   | Victor|
-| xor2(BDD_ID a, BDD_ID b)             |      [ ]    |  [ ]   | Victor|
-| neg(BDD_ID a)                        |      [ ]    |  [ ]   | Victor|
-| nand2(BDD_ID a, BDD_ID b)            |      [ ]    |  [ ]   | Victor|
-| nor2(BDD_ID a, BDD_ID b)             |      [ ]    |  [ ]   | Victor|
-| xnor2(BDD_ID a, BDD_ID b)            |      [ ]    |  [ ]   | Victor|
+| OBDDManager()       |      [X]    |  [X]   | Victor |
+| OBDDManager(std::vector<Node> nodes)       |      [X]    |  []   | Victor |
+| createVar(const std::string &label)       |      [X]    |  [X]   | Victor |
+| True()                                     |      [X]    |  [X]   | Victor|
+| False()                                    |      [X]    |  [X]   | Victor|
+| isConstant(BDD_ID f)                       |      [X]    |  [X]   | Victor|
+| isVariable(BDD_ID x)                       |      [X]    |  [X]   | Victor|
+| isExpression(BDD_ID x)                       |      [X]    |  []   | Victor|
+| topVar(BDD_ID f)                           |      [X]    |  []   | Kamel |
+| low(BDD_ID f)                           |      [X]    |  []   | Kamel |
+| high(BDD_ID f)                           |      [X]    |  []   | Kamel |
+| nodeData(BDD_ID f)                           |      [X]    |  []   | Victor |
+| ite(BDD_ID i, BDD_ID t, BDD_ID e)          |      [X]    |  []   | Victor|
+| coFactorTrue(BDD_ID f, BDD_ID x)          |      [X]    |  []   | Kamel |
+| coFactorFalse(BDD_ID f, BDD_ID x)    |      [X]    |  [X]   | Kamel|
+| coFactorTrue(BDD_ID f)               |      [X]    | [X]   | Kamel |
+| coFactorFalse(BDD_ID f)              |      [X]    |  [X]   | Kamel |
+| and2(BDD_ID a, BDD_ID b)             |      [X]    |  [X]   | Victor|
+| or2(BDD_ID a, BDD_ID b)              |      [X]    |  [X]   | Victor|
+| xor2(BDD_ID a, BDD_ID b)             |      [X]    |  [X]   | Victor|
+| neg(BDD_ID a)                        |      [X]    |  [X]   | Victor|
+| nand2(BDD_ID a, BDD_ID b)            |      [X]    |  [X]   | Victor|
+| nor2(BDD_ID a, BDD_ID b)             |      [X]    |  [X]   | Victor|
+| xnor2(BDD_ID a, BDD_ID b)            |      [X]    |  [X]   | Victor|
 | getTopVarName(const BDD_ID &root)    |      [ ]    |  [ ]   | Kamel |
 | findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) |  [ ] |  [ ]   | Kamel |
 | findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root)   | [ ] |  [ ]   | Kamel |
-| uniqueTableSize()                    |      [ ]    |  [ ]   | Kamel |
-| visualizeBDD(std::string filepath, BDD_ID &root) |      [ ]    | [ ]   | Victor|
+| uniqueTableSize()                    |      [X]    |  [ ]   | Victor |
+| visualizeBDD(std::string filepath, BDD_ID &root) |      [X]    | [ ]   | Victor|
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
