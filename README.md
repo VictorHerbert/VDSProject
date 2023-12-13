@@ -233,9 +233,9 @@ _Below is an example of how you can instruct your audience on installing and set
 | nand2(BDD_ID a, BDD_ID b)            |      [X]    |  [X]   | Victor|
 | nor2(BDD_ID a, BDD_ID b)             |      [X]    |  [X]   | Victor|
 | xnor2(BDD_ID a, BDD_ID b)            |      [X]    |  [X]   | Victor|
-| getTopVarName(const BDD_ID &root)    |      [ ]    |  [ ]   | Kamel |
-| findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) |  [ ] |  [ ]   | Kamel |
-| findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root)   | [ ] |  [ ]   | Kamel |
+| getTopVarName(const BDD_ID &root)    |      [X]    |  [ ]   | Kamel |
+| findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) |  [X] |  [ ]   | Kamel |
+| findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root)   | [X] |  [ ]   | Kamel |
 | uniqueTableSize()                    |      [X]    |  [X]   | Victor |
 | visualizeBDD(std::string filepath, BDD_ID &root) |      [X]    | [-]   | Victor|
 
