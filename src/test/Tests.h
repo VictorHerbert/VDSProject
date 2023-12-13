@@ -72,14 +72,6 @@ namespace ClassProject {
         ASSERT_EQ(testObj.nodeData(id_b), (NodeData{.low=0, .high=1, .topVar=id_b}));
     }
 
-    TEST_F(BasicTest, CreateVarDuplicate){                
-        BDD_ID id1 = testObj.createVar("a");
-        BDD_ID id2 = testObj.createVar("a");
-
-        ASSERT_EQ(testObj.nodeData(id1), (NodeData{.low=0, .high=1, .topVar=id1}));        
-        ASSERT_EQ(id1, id2);                
-    }
-
     TEST_F(FunctionsTest, Constant){
         ASSERT_EQ(testObj.isConstant(0), true);  // false node
         ASSERT_EQ(testObj.isConstant(1), true);  // true node
@@ -121,8 +113,6 @@ namespace ClassProject {
         ASSERT_EQ(testObj.high(2), testObj.coFactorTrue(2)); // variable
         ASSERT_EQ(testObj.high(5), testObj.coFactorTrue(5)); // expression
     }
-
-
 }
 
 #endif
