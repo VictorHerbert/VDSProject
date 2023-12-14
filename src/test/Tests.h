@@ -519,9 +519,9 @@ namespace ClassProject {
         ASSERT_EQ(testObj.uniqueTableSize(), 10);
 
         ASSERT_EQ(testObj.high(id_f), id_and_cd);   
-        ASSERT_EQ(testObj.topVar(id_f), id_c);
+        ASSERT_EQ(testObj.topVar(id_f), id_a);
 
-        ASSERT_EQ(testObj.nodeData(id_f1), (NodeData{.low=0, .high=id_and_cd, .topVar=id_b}));
+        ASSERT_EQ(testObj.nodeData(id_f1), (NodeData{.low=0, .high=id_and_cd, .topVar=id_b}));        
     }
 }
 
