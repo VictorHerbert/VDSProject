@@ -221,7 +221,7 @@ namespace ClassProject {
         std::set<BDD_ID> nodes;
 
         testObj.findNodes(2, nodes); // Variable node
-        ASSERT_EQ(nodes, (std::set<BDD_ID>{2})); 
+        ASSERT_EQ(nodes, (std::set<BDD_ID>{2}));
 
         nodes.clear();
         testObj.findNodes(7, nodes); // Expression node
@@ -232,7 +232,7 @@ namespace ClassProject {
         std::set<BDD_ID> nodes;
 
         testObj.findVars(2, nodes); // Variable node
-        ASSERT_EQ(nodes, (std::set<BDD_ID>{2})); 
+        ASSERT_EQ(nodes, (std::set<BDD_ID>{2}));
 
         nodes.clear();
         testObj.findVars(6, nodes); // Expression node
@@ -243,7 +243,7 @@ namespace ClassProject {
         ASSERT_EQ(nodes, (std::set<BDD_ID>{4,5}));
     }
 
-    
+
     TEST_F(VariablesTest, And2Constants){
         BDD_ID id_n, id_a = 2;
         id_n = testObj.and2(0, 0);
@@ -455,7 +455,7 @@ namespace ClassProject {
     }
 
     TEST_F(VariablesTest, Nor2Variables2){
-        BDD_ID id_n, id_a = 2, id_b = 3;        
+        BDD_ID id_n, id_a = 2, id_b = 3;
         id_n = testObj.nor2(id_b, id_a);
         ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=testObj.neg(id_b), .high=0, .topVar=id_a}));
     }
@@ -493,17 +493,17 @@ namespace ClassProject {
         BDD_ID id_n, id_a = 2, id_b = 3;
         id_n = testObj.xnor2(id_b, id_a);
         ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=testObj.neg(id_b), .high=id_b, .topVar=id_a}));
-    }    
+    }
 
     TEST_F(VariablesTest, Xnor2Variables2){
-        BDD_ID id_n, id_a = 2, id_b = 3;        
+        BDD_ID id_n, id_a = 2, id_b = 3;
         id_n = testObj.xnor2(id_b, id_a);
         ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=testObj.neg(id_b), .high=id_b, .topVar=id_a}));
     }
 
     TEST_F(BasicTest, InterfaceTest){
         BDD_ID id_a, id_b, id_c, id_d, id_or_ab, id_and_cd, id_f, id_f1;
-        
+
         id_a = testObj.createVar("a");
         id_b = testObj.createVar("b");
         id_c = testObj.createVar("c");
@@ -519,10 +519,10 @@ namespace ClassProject {
 
         ASSERT_EQ(testObj.uniqueTableSize(), 10);
 
-        ASSERT_EQ(testObj.high(id_f), id_and_cd);   
+        ASSERT_EQ(testObj.high(id_f), id_and_cd);
         ASSERT_EQ(testObj.topVar(id_f), id_a);
 
-        ASSERT_EQ(testObj.nodeData(id_f1), (NodeData{.low=0, .high=id_and_cd, .topVar=id_b}));        
+        ASSERT_EQ(testObj.nodeData(id_f1), (NodeData{.low=0, .high=id_and_cd, .topVar=id_b}));
     }
 }
 

@@ -141,14 +141,14 @@ namespace ClassProject {
      *
      * i t + ~i e
      * Performs the IF Then Else recursive algorithm, adding nodes on demand
-     * 
+     *
      * @param i ID of the If node
      * @param t ID of the Then node
      * @param e ID of the Else node
      * @return BDD_ID of the added node
      * @author Victor Herbert
      */
-    BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e){     
+    BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e){
         if(i == True()) return t;
         if(i == False()) return e;
         if(t == True() and e == False()) return i;
@@ -163,7 +163,7 @@ namespace ClassProject {
                 top = std::min(top, topVar(t));
             if(!isConstant(e))
                 top = std::min(top, topVar(e));
-            
+
             BDD_ID high = ite(coFactorTrue(i,top), coFactorTrue(t,top), coFactorTrue(e,top));
             BDD_ID low = ite(coFactorFalse(i,top), coFactorFalse(t,top), coFactorFalse(e,top));
 
@@ -324,11 +324,11 @@ namespace ClassProject {
 
     /**
      * @brief Breath first travel of the tree starting from node
-     * 
+     *
      * @param root node from which the traversal starts
      * @param order output vector of the traversal in postorder
      * @param marc vector cointaning which nodes have been visited
-     * 
+     *
      * @author Victor Herbert
      */
     void Manager::bfs(BDD_ID root, std::vector<BDD_ID> &order, std::vector<bool> &marc){
@@ -429,7 +429,7 @@ namespace ClassProject {
     *
     * returns the positive cofactor of the function represented by ID f with respect to
     * the variable represented by ID x.
-    * 
+    *
     * @param f ID of node representing function f
     * @param x ID of node representing variable x
     * @return BDD_ID ID of the node representing the postive cofactor
@@ -513,7 +513,7 @@ namespace ClassProject {
     /**
      * @brief returns the set of all nodes that are reachable from root node
      * including itself
-     * 
+     *
      *
      * uses DFS algorithm
      *
@@ -542,8 +542,8 @@ namespace ClassProject {
     /**
      * @brief returns the set of all variables that are reachable from root node
      * including itself
-     * 
-     * 
+     *
+     *
      * uses DFS algorithm
      *
      * @param root
@@ -560,7 +560,7 @@ namespace ClassProject {
         if((discovered.count(root) != 0) || isConstant(root)){
             return;
         }
-                
+
         vars_of_root.insert(topVar(root));
         discovered.insert(root);
 
