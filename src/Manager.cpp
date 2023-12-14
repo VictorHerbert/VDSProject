@@ -17,9 +17,9 @@ namespace ClassProject {
 
     /**
     * @brief Manager class standard constructor
-    * @author Victor Herbert
     *
     * @return BDD_ID ID of top variable node
+    * @author Victor Herbert
     */
     Manager::Manager(){
         nodes = {FALSE_NODE, TRUE_NODE};
@@ -32,6 +32,7 @@ namespace ClassProject {
      * on it to ensure its consistency
      *
      * @param nodes
+     * @author Kamel Fakih
      */
     Manager::Manager(std::vector<Node> nodes) : nodes(nodes){
         if(!(nodes[0] == FALSE_NODE) || !(nodes[1] == TRUE_NODE)){
@@ -49,6 +50,7 @@ namespace ClassProject {
      * @brief returns the number of nodes in the unique table
      *
      * @return size_t
+     * @author Kamel Fakih
      */
     size_t Manager::uniqueTableSize(){
         return unique_table.size();
@@ -56,9 +58,9 @@ namespace ClassProject {
 
     /**
      * @brief returns a pointer for the True node
-     * @author Victor Herbert
      *
      * @return const BDD_ID& of the True node
+     * @author Victor Herbert
      */
     const BDD_ID &Manager::True(){
         return TRUE_ADDRESS;
@@ -66,9 +68,9 @@ namespace ClassProject {
 
     /**
      * @brief returns a pointer for the False node
-     * @author Victor Herbert
      *
      * @return const BDD_ID& of the False node
+     * @author Victor Herbert
      */
     const BDD_ID &Manager::False(){
         return FALSE_ADDRESS;
@@ -77,9 +79,9 @@ namespace ClassProject {
 
     /**
      * @brief Checks if a given node is a constant
-     * @author Victor Herbert
      *
      * @return bool stating if the node is constant
+     * @author Victor Herbert
      */
     bool Manager::isConstant(BDD_ID f){
         return (f == True() || f == False());
@@ -87,9 +89,9 @@ namespace ClassProject {
 
     /**
      * @brief Checks if a given node is a variable
-     * @author Victor Herbert
      *
      * @return bool stating if the node is avariable
+     * @author Victor Herbert
      */
     bool Manager::isVariable(BDD_ID x){
         return nodes[x].isVariable;
@@ -97,9 +99,9 @@ namespace ClassProject {
 
     /**
      * @brief Checks if a given node is an expression
-     * @author Victor Herbert
      *
      * @return bool stating if the node is a expression
+     * @author Victor Herbert
      */
     bool Manager::isExpression(BDD_ID x){
         return !isConstant(x) && !isVariable(x);
@@ -107,9 +109,9 @@ namespace ClassProject {
 
     /**
     * @brief Creates a variable in the tree
-    * @author Victor Herbert
     *
     * @return BDD_ID ID of the variable node
+    * @author Victor Herbert
     */
     BDD_ID Manager::createVar(const std::string &label){
         return addNode({
@@ -121,10 +123,10 @@ namespace ClassProject {
 
     /**
      * @brief Adds a new entry on the unique table only if there is not a previous entry with same data
-     * @author Victor Herbert
      *
      * @param data of the to be added node
      * @return BDD_ID of the added node
+     * @author Victor Herbert
      */
     BDD_ID Manager::addNode(Node node){
         if(unique_table.find(node.data) == unique_table.end()){
@@ -137,12 +139,14 @@ namespace ClassProject {
     /**
      * @brief If Then Else routine
      *
+     * i t + ~i e
+     * Performs the IF Then Else recursive algorithm, adding nodes on demand
+     * 
      * @param i ID of the If node
      * @param t ID of the Then node
      * @param e ID of the Else node
      * @return BDD_ID of the added node
-     * i t + ~i e
-     * Performs the IF Then Else recursive algorithm, adding nodes on demand
+     * @author Victor Herbert
      */
     BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e){     
         if(i == True()) return t;
@@ -182,6 +186,7 @@ namespace ClassProject {
      * @param a first parameter of the operation
      * @param b second parameter of the operation
      * @param op string containning the name of the operation
+     * @author Victor Herbert
      */
     void Manager::updateNodeLabel(BDD_ID id, BDD_ID a, BDD_ID b, std::string op){
         if(nodes[id].label == "")
@@ -193,6 +198,7 @@ namespace ClassProject {
      *
      * @param root
      * @return std::string
+     * @author Kamel Fakih
      */
     std::string Manager::getTopVarName(const BDD_ID &root){
         return nodes[topVar(root)].label;
@@ -200,11 +206,11 @@ namespace ClassProject {
 
     /**
      * @brief creates a node that represents the AND operation between other two nodes
-     * @author Victor Herbert
      *
      * @param a operand
      * @param b operand
      * @return BDD_ID of the node which encapsulates the operation
+     * @author Victor Herbert
      */
     BDD_ID Manager::and2(BDD_ID a, BDD_ID b){
         BDD_ID id = ite(a,b, 0);
@@ -214,11 +220,11 @@ namespace ClassProject {
 
     /**
      * @brief creates a node that represents the OR operation between other two nodes
-     * @author Victor Herbert
      *
      * @param a operand
      * @param b operand
      * @return BDD_ID of the node which encapsulates the operation
+     * @author Victor Herbert
      */
     BDD_ID Manager::or2(BDD_ID a, BDD_ID b){
         BDD_ID id = ite(a, 1, b);
@@ -228,11 +234,11 @@ namespace ClassProject {
 
     /**
      * @brief creates a node that represents the XOR operation between other two nodes
-     * @author Victor Herbert
      *
      * @param a operand
      * @param b operand
      * @return BDD_ID of the node which encapsulates the operation
+     * @author Victor Herbert
      */
     BDD_ID Manager::xor2(BDD_ID a, BDD_ID b){
         BDD_ID id = ite(a,neg(b), b);
@@ -242,10 +248,10 @@ namespace ClassProject {
 
     /**
      * @brief creates a node that represents the negated version of a node
-     * @author Victor Herbert
      *
      * @param a operand
      * @return BDD_ID of the node which encapsulates the operation
+     * @author Victor Herbert
      */
     BDD_ID Manager::neg(BDD_ID a){
         BDD_ID id = ite(a, 0, 1);
@@ -256,11 +262,11 @@ namespace ClassProject {
 
     /**
      * @brief creates a node that represents the NAND operation between other two nodes
-     * @author Victor Herbert
      *
      * @param a operand
      * @param b operand
      * @return BDD_ID of the node which encapsulates the operation
+     * @author Victor Herbert
      */
     BDD_ID Manager::nand2(BDD_ID a, BDD_ID b){
         BDD_ID id = ite(a,neg(b), 1);
@@ -271,11 +277,11 @@ namespace ClassProject {
 
     /**
      * @brief creates a node that represents the NOR operation between other two nodes
-     * @author Victor Herbert
      *
      * @param a operand
      * @param b operand
      * @return BDD_ID of the node which encapsulates the operation
+     * @author Victor Herbert
      */
     BDD_ID Manager::nor2(BDD_ID a, BDD_ID b){
         BDD_ID id = ite(a, 0, neg(b));
@@ -285,11 +291,11 @@ namespace ClassProject {
 
     /**
      * @brief creates a node that represents the XNOR operation between other two nodes
-     * @author Victor Herbert
      *
      * @param a operand
      * @param b operand
      * @return BDD_ID of the node which encapsulates the operation
+     * @author Victor Herbert
      */
     BDD_ID Manager::xnor2(BDD_ID a, BDD_ID b){
         BDD_ID id = ite(a,b, neg(b));
@@ -303,6 +309,8 @@ namespace ClassProject {
      * @param root node from which the traversal starts
      * @param order output vector of the traversal in postorder
      * @param marc vector cointaning which nodes have been visited
+     * 
+     * @author Victor Herbert
      */
     void Manager::bfs(BDD_ID root, std::vector<BDD_ID> &order, std::vector<bool> &marc){
         if(!isConstant(root)){
@@ -328,6 +336,7 @@ namespace ClassProject {
      * @param root of the subtree to be printed
      *
      * Creates a Mermaid diagram of the desired subtree in a markdown file
+     * @author Victor Herbert
      */
     void Manager::visualizeBDD(std::string filepath, BDD_ID &root){
         std::ofstream file;
@@ -353,10 +362,10 @@ namespace ClassProject {
 
     /**
     * @brief returns the id of the top variable of the given node f
-    * @author Kamel Fakih
     *
     * @param f ID of node representing function f
     * @return BDD_ID ID of top variable node
+    * @author Kamel Fakih
     */
     BDD_ID Manager::topVar(BDD_ID f){
         return nodes[f].data.topVar;
@@ -364,10 +373,10 @@ namespace ClassProject {
 
     /**
     * @brief returns the id of the high node of the given node f
-    * @author Kamel Fakih
     *
     * @param f ID of node representing function f
     * @return BDD_ID ID of top variable node
+    * @author Kamel Fakih
     */
     BDD_ID Manager::low(BDD_ID f){
         return nodes[f].data.low;
@@ -375,10 +384,10 @@ namespace ClassProject {
 
     /**
     * @brief returns the id of the low of the given node f
-    * @author Kamel Fakih
     *
     * @param f ID of node representing function f
     * @return BDD_ID ID of top variable node
+    * @author Kamel Fakih
     */
     BDD_ID Manager::high(BDD_ID f){
         return nodes[f].data.high;
@@ -386,10 +395,10 @@ namespace ClassProject {
 
     /**
     * @brief returns the NodeData of the low of the given node f
-    * @author Victor Herbert
     *
     * @param f ID of node representing function f
     * @return BDD_ID ID of top variable node
+    * @author Victor Herbert
     */
     NodeData Manager::nodeData(BDD_ID f){
         return nodes[f].data;
@@ -397,14 +406,15 @@ namespace ClassProject {
 
     /**
     * @brief positive cofactor of the function f with respect to variable x
-    * @author Kamel Fakih
     *
-    * @param f ID of node representing function f
-    * @param x ID of node representing variable x
-    * @return BDD_ID ID of the node representing the postive cofactor
     *
     * returns the positive cofactor of the function represented by ID f with respect to
     * the variable represented by ID x.
+    * 
+    * @param f ID of node representing function f
+    * @param x ID of node representing variable x
+    * @return BDD_ID ID of the node representing the postive cofactor
+    * @author Kamel Fakih
     */
     BDD_ID Manager::coFactorTrue(BDD_ID f, BDD_ID x){
 
@@ -426,12 +436,12 @@ namespace ClassProject {
 
     /**
     * @brief positive cofactor of the function f with respect to its top variable
-    * @author Kamel Fakih
     *
+    * calls coFactorTrue(BDD_ID f, BDD_ID x) with x as f's top variable
     * @param f ID of node representing function f
     * @return BDD_ID ID of the node representing the postive cofactor
     *
-    * calls coFactorTrue(BDD_ID f, BDD_ID x) with x as f's top variable
+    * @author Kamel Fakih
     *
     */
     BDD_ID Manager::coFactorTrue(BDD_ID f){
@@ -440,14 +450,14 @@ namespace ClassProject {
 
     /**
     * @brief negative cofactor of the function f with respect to variable x
-    * @author Kamel Fakih
     *
-    * @param f ID of node representing function f
-    * @param x ID of node representing variable x
-    * @return BDD_ID ID of the node representing the negative cofactor
     *
     * returns the negative cofactor of the function represented by ID f with respect to
     * the variable represented by ID x.
+    * @param f ID of node representing function f
+    * @param x ID of node representing variable x
+    * @return BDD_ID ID of the node representing the negative cofactor
+    * @author Kamel Fakih
     */
     BDD_ID Manager::coFactorFalse(BDD_ID f, BDD_ID x){
 
@@ -469,13 +479,13 @@ namespace ClassProject {
 
     /**
     * @brief negative cofactor of the function f with respect to its top variable
-    * @author Kamel Fakih
-    *
-    * @param f ID of node representing function f
-    * @return BDD_ID ID of the node representing the negative cofactor
     *
     * calls coFactorFalse(BDD_ID f, BDD_ID x) with x as f's top variable
     *
+    *  @param f ID of node representing function f
+    * @return BDD_ID ID of the node representing the negative cofactor
+    *
+    * @author Kamel Fakih
     */
     BDD_ID Manager::coFactorFalse(BDD_ID f){
         return coFactorFalse(f, topVar(f));
@@ -484,11 +494,13 @@ namespace ClassProject {
     /**
      * @brief returns the set of all nodes that are reachable from root node
      * including itself
+     * 
      *
      * uses DFS algorithm
      *
      * @param root
      * @param nodes_of_root
+     * @author Kamel Fakih
      */
     void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root){
         std::unordered_set<BDD_ID> discovered = std::unordered_set<BDD_ID>();
@@ -509,10 +521,15 @@ namespace ClassProject {
     }
 
     /**
-     * @brief
+     * @brief returns the set of all variables that are reachable from root node
+     * including itself
+     * 
+     * 
+     * uses DFS algorithm
      *
      * @param root
      * @param vars_of_root
+     * @author Kamel Fakih
      */
     void Manager::findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root){
         std::unordered_set<BDD_ID> discovered = std::unordered_set<BDD_ID>();
