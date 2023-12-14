@@ -154,11 +154,11 @@ namespace ClassProject {
         NodeData nodeData = {.low=t, .high=e, .topVar=i};
 
         if(computed_table.find(nodeData) == computed_table.end()){
-            BDD_ID top = i;
+            BDD_ID top = topVar(i);
             if(!isConstant(t))
-                top = std::min(top, t);
+                top = std::min(top, topVar(t));
             if(!isConstant(e))
-                top = std::min(top, e);
+                top = std::min(top, topVar(e));
             
             BDD_ID high = ite(coFactorTrue(i,top), coFactorTrue(t,top), coFactorTrue(e,top));
             BDD_ID low = ite(coFactorFalse(i,top), coFactorFalse(t,top), coFactorFalse(e,top));
