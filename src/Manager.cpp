@@ -214,7 +214,9 @@ namespace ClassProject {
      */
     BDD_ID Manager::and2(BDD_ID a, BDD_ID b){
         BDD_ID id = ite(a,b, 0);
+        #ifdef UPDATE_LABEL
         updateNodeLabel(id, a, b, "and2");
+        #endif
         return id;
     }
 
@@ -228,7 +230,10 @@ namespace ClassProject {
      */
     BDD_ID Manager::or2(BDD_ID a, BDD_ID b){
         BDD_ID id = ite(a, 1, b);
+        #ifdef UPDATE_LABEL
         updateNodeLabel(id, a, b, "or2");
+        #endif
+
         return id;
     }
 
@@ -242,7 +247,10 @@ namespace ClassProject {
      */
     BDD_ID Manager::xor2(BDD_ID a, BDD_ID b){
         BDD_ID id = ite(a,neg(b), b);
+        #ifdef UPDATE_LABEL
         updateNodeLabel(id, a, b, "xor2");
+        #endif
+
         return id;
     }
 
@@ -255,8 +263,11 @@ namespace ClassProject {
      */
     BDD_ID Manager::neg(BDD_ID a){
         BDD_ID id = ite(a, 0, 1);
+        #ifdef UPDATE_LABEL
         if(nodes[id].label == "")
             nodes[id].label = "~" + nodes[a].label;
+        #endif
+
         return id;
     }
 
@@ -270,8 +281,10 @@ namespace ClassProject {
      */
     BDD_ID Manager::nand2(BDD_ID a, BDD_ID b){
         BDD_ID id = ite(a,neg(b), 1);
-        //BDD_ID id = neg(and2(a,b));
+        #ifdef UPDATE_LABEL
         updateNodeLabel(id, a, b, "nand2");
+        #endif
+
         return id;
     }
 
@@ -285,7 +298,10 @@ namespace ClassProject {
      */
     BDD_ID Manager::nor2(BDD_ID a, BDD_ID b){
         BDD_ID id = ite(a, 0, neg(b));
+        #ifdef UPDATE_LABEL
         updateNodeLabel(id, a, b, "nor2");
+        #endif
+
         return id;
     }
 
@@ -299,7 +315,10 @@ namespace ClassProject {
      */
     BDD_ID Manager::xnor2(BDD_ID a, BDD_ID b){
         BDD_ID id = ite(a,b, neg(b));
+        #ifdef UPDATE_LABEL
         updateNodeLabel(id, a, b, "xnor2");
+        #endif
+
         return id;
     }
 
@@ -351,8 +370,8 @@ namespace ClassProject {
         file << "```mermaid\nstateDiagram-v2\n";
 
         for (BDD_ID node : order){
-            file << nodes[node].label << " --> " << nodes[nodes[node].data.low].label << ": 0\n";
-            file << nodes[node].label << " --> " << nodes[nodes[node].data.high].label << ": 1\n";
+            file << node << " --> " << nodes[node].data.low << ": 0\n";
+            file << node << " --> " << nodes[node].data.high << ": 1\n";
         }
         file << "classDef leaf fill:white\nclass 1 leaf\nclass 0 leaf\n```";
 

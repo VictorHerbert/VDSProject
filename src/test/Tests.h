@@ -61,6 +61,11 @@ namespace ClassProject {
         }
     };
 
+    TEST_F(FunctionsTest, VisualizeBDD){
+        BDD_ID s = 7;
+        testObj.visualizeBDD("visualization.md", s);
+    }
+
     TEST_F(BasicTest, Constructor){
         ASSERT_EQ(testObj.nodeData(0), (NodeData{.low=0, .high=0, .topVar=0})); // false node
         ASSERT_EQ(testObj.nodeData(1), (NodeData{.low=1, .high=1, .topVar=1})); // true node
