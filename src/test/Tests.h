@@ -146,6 +146,10 @@ namespace ClassProject {
         ASSERT_EQ(testObj.low(7), 0);  // function node (c*d)
     }
 
+    TEST_F(BasicTest, UniqueTableSize){
+        ASSERT_EQ(testObj.uniqueTableSize(), 2);
+    }
+
     TEST_F(FunctionsTest, UniqueTableSize){
         ASSERT_EQ(testObj.uniqueTableSize(), 8);
     }
@@ -171,6 +175,14 @@ namespace ClassProject {
 
         BDD_ID id_n = testObj.ite(id_a, id_b, id_c);
         ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=id_c, .high=id_b, .topVar=id_a}));
+    }
+
+    TEST_F(FunctionsTest, IteComputedTable){
+        BDD_ID id_a = 2, id_b = 3, id_c = 4;
+
+        BDD_ID id_n1 = testObj.ite(id_a, id_b, id_c);
+        BDD_ID id_n2 = testObj.ite(id_a, id_b, id_c);
+        ASSERT_EQ(id_n1, id_n2);
     }
 
     TEST_F(FunctionsTest, CoFactorFalseStandard){
@@ -480,12 +492,36 @@ namespace ClassProject {
         BDD_ID id_n, id_a = 2, id_b = 3;
         id_n = testObj.xnor2(id_b, id_a);
         ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=testObj.neg(id_b), .high=id_b, .topVar=id_a}));
-    }
+    }    
 
     TEST_F(VariablesTest, Xnor2Variables2){
         BDD_ID id_n, id_a = 2, id_b = 3;        
         id_n = testObj.xnor2(id_b, id_a);
         ASSERT_EQ(testObj.nodeData(id_n), (NodeData{.low=testObj.neg(id_b), .high=id_b, .topVar=id_a}));
+    }
+
+    TEST_F(BasicTest, InterfaceTest){
+        BDD_ID id_a, id_b, id_c, id_d, id_or_ab, id_and_cd, id_f, id_f1;
+        
+        id_a = testObj.createVar("a");
+        id_b = testObj.createVar("b");
+        id_c = testObj.createVar("c");
+        id_d = testObj.createVar("d");
+
+        id_or_ab = testObj.or2(id_a, id_b);
+        id_and_cd = testObj.and2(id_c, id_d);
+
+        id_f = testObj.and2(id_or_ab, id_and_cd);
+
+        // extra node inserted by and 2 operation
+        id_f1 = testObj.low(id_f);
+
+        ASSERT_EQ(testObj.uniqueTableSize(), 10);
+
+        ASSERT_EQ(testObj.high(id_f), id_and_cd);   
+        ASSERT_EQ(testObj.topVar(id_f), id_c);
+
+        ASSERT_EQ(testObj.nodeData(id_f1), (NodeData{.low=0, .high=id_and_cd, .topVar=id_b}));
     }
 }
 
