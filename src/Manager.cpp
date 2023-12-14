@@ -23,6 +23,8 @@ namespace ClassProject {
     */
     Manager::Manager(){
         nodes = {FALSE_NODE, TRUE_NODE};
+        unique_table.insert({{.low = 0, .high = 0, .topVar = Manager::FALSE_ADDRESS}, FALSE_ADDRESS});
+        unique_table.insert({{.low = 1, .high = 1, .topVar = Manager::TRUE_ADDRESS}, TRUE_ADDRESS});
     }
 
     /**
