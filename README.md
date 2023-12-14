@@ -210,19 +210,19 @@ _Below is an example of how you can instruct your audience on installing and set
 | Function Name                       | Implemented | Tested | Person |
 |--------------------------------------|-------------|--------|-------|
 | OBDDManager()       |      [X]    |  [X]   | Victor |
-| OBDDManager(std::vector<Node> nodes)       |      [X]    |  []   | Kamel |
+| OBDDManager(std::vector<Node> nodes)       |      [X]    |  [X]   | Kamel |
 | createVar(const std::string &label)       |      [X]    |  [X]   | Victor |
 | True()                                     |      [X]    |  [X]   | Victor|
 | False()                                    |      [X]    |  [X]   | Victor|
 | isConstant(BDD_ID f)                       |      [X]    |  [X]   | Victor|
 | isVariable(BDD_ID x)                       |      [X]    |  [X]   | Victor|
-| isExpression(BDD_ID x)                       |      [X]    |  []   | Victor|
-| topVar(BDD_ID f)                           |      [X]    |  []   | Kamel |
-| low(BDD_ID f)                           |      [X]    |  []   | Kamel |
-| high(BDD_ID f)                           |      [X]    |  []   | Kamel |
+| isExpression(BDD_ID x)                       |      [X]    |  [X]   | Victor|
+| topVar(BDD_ID f)                           |      [X]    |  [X]   | Kamel |
+| low(BDD_ID f)                           |      [X]    |  [X]   | Kamel |
+| high(BDD_ID f)                           |      [X]    |  [X]   | Kamel |
 | nodeData(BDD_ID f)                           |      [X]    |  [X]   | Victor |
 | ite(BDD_ID i, BDD_ID t, BDD_ID e)          |      [X]    |  [X]   | Victor|
-| coFactorTrue(BDD_ID f, BDD_ID x)          |      [X]    |  []   | Kamel |
+| coFactorTrue(BDD_ID f, BDD_ID x)          |      [X]    |  [X]   | Kamel |
 | coFactorFalse(BDD_ID f, BDD_ID x)    |      [X]    |  [X]   | Kamel|
 | coFactorTrue(BDD_ID f)               |      [X]    | [X]   | Kamel |
 | coFactorFalse(BDD_ID f)              |      [X]    |  [X]   | Kamel |
@@ -233,9 +233,9 @@ _Below is an example of how you can instruct your audience on installing and set
 | nand2(BDD_ID a, BDD_ID b)            |      [X]    |  [X]   | Victor|
 | nor2(BDD_ID a, BDD_ID b)             |      [X]    |  [X]   | Victor|
 | xnor2(BDD_ID a, BDD_ID b)            |      [X]    |  [X]   | Victor|
-| getTopVarName(const BDD_ID &root)    |      [X]    |  [ ]   | Kamel |
-| findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) |  [X] |  [ ]   | Kamel |
-| findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root)   | [X] |  [ ]   | Kamel |
+| getTopVarName(const BDD_ID &root)    |      [X]    |  [X]   | Kamel |
+| findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) |  [X] |  [X]   | Kamel |
+| findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root)   | [X] |  [X]   | Kamel |
 | uniqueTableSize()                    |      [X]    |  [X]   | Victor |
 | visualizeBDD(std::string filepath, BDD_ID &root) |      [X]    | [-]   | Victor|
 

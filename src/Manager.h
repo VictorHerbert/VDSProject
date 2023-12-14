@@ -26,7 +26,7 @@ namespace ClassProject {
                 return high < other.high;
             }
             return low < other.low;
-        }        
+        }
 
         bool operator== (const NodeData & other) const {
             return (low == other.low) && (high == other.high) && (topVar == other.topVar);
@@ -58,13 +58,13 @@ namespace ClassProject {
         const static Node TRUE_NODE;
 
         BDD_ID addNode(Node data);
-        void bfs(const BDD_ID root, std::vector<BDD_ID> &order, std::vector<bool> &marc);        
+        void bfs(const BDD_ID root, std::vector<BDD_ID> &order, std::vector<bool> &marc);
 
         void findNodesDFS(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root, std::unordered_set<BDD_ID> &discovered);
         void findVarsDFS(const BDD_ID &root, std::set<BDD_ID> &vars_of_root, std::unordered_set<BDD_ID> &discovered);
 
     public:
-        
+
         Manager();
         Manager(std::vector<Node> nodes);
 
@@ -81,7 +81,7 @@ namespace ClassProject {
         bool isExpression(BDD_ID x);
 
         BDD_ID topVar(BDD_ID f);
-        
+
         BDD_ID topVar(BDD_ID f, BDD_ID g);
 
         NodeData nodeData(BDD_ID id);
@@ -100,7 +100,7 @@ namespace ClassProject {
 
         BDD_ID coFactorFalse(BDD_ID f);
 
-        bool updateNodeLabel(BDD_ID id, BDD_ID a, BDD_ID b, std::string op);
+        void updateNodeLabel(BDD_ID id, BDD_ID a, BDD_ID b, std::string op);
 
         BDD_ID and2(BDD_ID a, BDD_ID b);
 
