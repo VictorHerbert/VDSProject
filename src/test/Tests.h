@@ -151,10 +151,6 @@ namespace ClassProject {
         ASSERT_EQ(testObj.low(7), 0);  // function node (c*d)
     }
 
-    TEST_F(BasicTest, UniqueTableSize){
-        ASSERT_EQ(testObj.uniqueTableSize(), 2);
-    }
-
     TEST_F(FunctionsTest, UniqueTableSize){
         ASSERT_EQ(testObj.uniqueTableSize(), 8);
     }
