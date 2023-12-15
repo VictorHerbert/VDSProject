@@ -2,12 +2,9 @@
 // Created by Carolina P. Nogueira 2016
 //
 
-/*! \mainpage MyProject - A Brief Description.
-\image html Mylogo.png
-\section my-intro MyProject Introduction
-\htmlinclude about-MyProject.html
-
-Just writing some text to set up things
+/*! \mainpage VDS Project - RPTU Kaiserslautern Verification of Digital Systems Lab Project
+\authors Kamel Fakih
+\authors Victor Herbert
 */
 
 #include <iostream>

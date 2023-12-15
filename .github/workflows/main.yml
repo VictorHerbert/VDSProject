@@ -17,5 +17,3 @@ jobs:
       run:  cmake --build build
     - name: Run test
       run: cd build/src/test && ./VDSProject_test
-    - name: Run doxygen
-      run: sudo apt-get install -y doxygen && doxygen config.doxygen

@@ -1,4 +1,5 @@
 gtest/
 build/
+doxygen/
 build/
 .vscode/
