@@ -96,7 +96,7 @@ namespace ClassProject {
      * @author Victor Herbert
      */
     bool Manager::isVariable(BDD_ID x){
-        return nodes[x].isVariable;
+        return nodes[x].data.topVar == x && !isConstant(x);
     }
 
     /**
@@ -118,7 +118,6 @@ namespace ClassProject {
     BDD_ID Manager::createVar(const std::string &label){
         return addNode({
             .label=label,
-            .isVariable=true,
             .data={.low=FALSE_ADDRESS, .high=TRUE_ADDRESS, .topVar=nodes.size()}
         });
     }
@@ -529,11 +528,9 @@ namespace ClassProject {
     }
 
     void Manager::findNodesDFS(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root, std::unordered_set<BDD_ID> &discovered){
-
-        if((discovered.count(root) != 0) || isConstant(root)){
+        if(discovered.count(root) != 0)
             return;
-        }
-
+        
         discovered.insert(root);
         nodes_of_root.insert(root);
 

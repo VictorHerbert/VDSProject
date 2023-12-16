@@ -31,12 +31,12 @@ namespace ClassProject {
 
         void SetUp() override {
             testObj = Manager({
-                {.label = "0",                      .data = {.low = 0, .high = 0, .topVar = 0}},
-                {.label = "1",                      .data = {.low = 1, .high = 1, .topVar = 1}},
-                {.label = "a", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 2}},
-                {.label = "b", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 3}},
-                {.label = "c", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 4}},
-                {.label = "d", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 5}}
+                {.label = "0", .data = {.low = 0, .high = 0, .topVar = 0}},
+                {.label = "1", .data = {.low = 1, .high = 1, .topVar = 1}},
+                {.label = "a", .data = {.low = 0, .high = 1, .topVar = 2}},
+                {.label = "b", .data = {.low = 0, .high = 1, .topVar = 3}},
+                {.label = "c", .data = {.low = 0, .high = 1, .topVar = 4}},
+                {.label = "d", .data = {.low = 0, .high = 1, .topVar = 5}}
             });
         }
     };
@@ -49,14 +49,14 @@ namespace ClassProject {
 
         void SetUp() override {
             testObj = Manager({
-                {.label = "0",                      .data = {.low = 0, .high = 0, .topVar = 0}},
-                {.label = "1",                      .data = {.low = 1, .high = 1, .topVar = 1}},
-                {.label = "a", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 2}},
-                {.label = "b", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 3}},
-                {.label = "c", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 4}},
-                {.label = "d", .isVariable=true,    .data = {.low = 0, .high = 1, .topVar = 5}},
-                {.label = "a+b",                    .data = {.low = 3, .high = 1, .topVar = 2}},
-                {.label = "c*d",                    .data = {.low = 0, .high = 5, .topVar = 4}}
+                {.label = "0", .data = {.low = 0, .high = 0, .topVar = 0}},
+                {.label = "1", .data = {.low = 1, .high = 1, .topVar = 1}},
+                {.label = "a", .data = {.low = 0, .high = 1, .topVar = 2}},
+                {.label = "b", .data = {.low = 0, .high = 1, .topVar = 3}},
+                {.label = "c", .data = {.low = 0, .high = 1, .topVar = 4}},
+                {.label = "d", .data = {.low = 0, .high = 1, .topVar = 5}},
+                {.label = "a+b", .data = {.low = 3, .high = 1, .topVar = 2}},
+                {.label = "c*d", .data = {.low = 0, .high = 5, .topVar = 4}}
             });
         }
     };
@@ -221,11 +221,11 @@ namespace ClassProject {
         std::set<BDD_ID> nodes;
 
         testObj.findNodes(2, nodes); // Variable node
-        ASSERT_EQ(nodes, (std::set<BDD_ID>{2}));
+        ASSERT_EQ(nodes, (std::set<BDD_ID>{0,1,2}));
 
         nodes.clear();
         testObj.findNodes(7, nodes); // Expression node
-        ASSERT_EQ(nodes, (std::set<BDD_ID>{5,7}));
+        ASSERT_EQ(nodes, (std::set<BDD_ID>{0,1,5,7}));
     }
 
     TEST_F(FunctionsTest, FindVariables){

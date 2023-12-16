@@ -35,7 +35,6 @@ namespace ClassProject {
 
     struct Node{
         std::string label;
-        bool isVariable = false;
         NodeData data;
 
         bool operator== (const Node &other) const {
