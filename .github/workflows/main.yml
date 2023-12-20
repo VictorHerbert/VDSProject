@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: install build dependencies
-    - run: sudo apt-get install libboost-dev
+      run: sudo apt-get install libboost-dev
     - name: Configure CMake
       run: cmake -S . -B build
     - name: Build project
