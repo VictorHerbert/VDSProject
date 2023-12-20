@@ -4,3 +4,4 @@ doxygen/
 build/
 .vscode/
 benchmarks/
+results_*/
