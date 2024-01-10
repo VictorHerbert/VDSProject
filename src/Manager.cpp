@@ -3,25 +3,28 @@
 #include <fstream>
 #include <unordered_set>
 
+//clear &&  make -C build/ VDSProject_bench && ./build/src/bench/VDSProject_bench benchmarks/iscas85/c3540.bench 
 namespace ClassProject {
 
     std::ostream& operator <<(std::ostream& stream, const Node& node) {
-        return stream << node.label << " : " << node.data.low << "," << node.data.high << "," << node.data.topVar;
-    }
+        return stream << node.label << " : " << node.low << "," << node.high << "," << node.topVar;
+    }    
 
     const BDD_ID Manager::FALSE_ADDRESS = 0;
     const BDD_ID Manager::TRUE_ADDRESS = 1;
 
-    const Node Manager::FALSE_NODE = {.label = "0", .data = {.low = 0, .high = 0, .topVar = Manager::FALSE_ADDRESS}};
-    const Node Manager::TRUE_NODE =  {.label = "1", .data = {.low = 1, .high = 1, .topVar = Manager::TRUE_ADDRESS}};
+    const Node Manager::FALSE_NODE = {.label = "0", .low = 0, .high = 0, .topVar = Manager::FALSE_ADDRESS};
+    const Node Manager::TRUE_NODE =  {.label = "1", .low = 1, .high = 1, .topVar = Manager::TRUE_ADDRESS};
 
     /**
     * @brief Manager class standard constructor
     *
-    * @return BDD_ID ID of top variable node
+    * @return Manager created object
     * @author Victor Herbert
     */
     Manager::Manager(){
+        unique_table.reserve(UNIQUE_TABLE_CAPACITY);
+        computed_table.reserve(UNIQUE_TABLE_CAPACITY);
         nodes = {FALSE_NODE, TRUE_NODE};
         unique_table.insert({{.low = 0, .high = 0, .topVar = Manager::FALSE_ADDRESS}, FALSE_ADDRESS});
         unique_table.insert({{.low = 1, .high = 1, .topVar = Manager::TRUE_ADDRESS}, TRUE_ADDRESS});
@@ -37,6 +40,8 @@ namespace ClassProject {
      * @author Kamel Fakih
      */
     Manager::Manager(std::vector<Node> nodes) : nodes(nodes){
+        unique_table.reserve(UNIQUE_TABLE_CAPACITY);
+        computed_table.reserve(UNIQUE_TABLE_CAPACITY);
         if(!(nodes[0] == FALSE_NODE) || !(nodes[1] == TRUE_NODE)){
             throw std::invalid_argument("true and false nodes are invalid");
         }
@@ -44,7 +49,7 @@ namespace ClassProject {
         // TODO add more validation on input nodes
 
         for(size_t i=0; i < nodes.size(); i++){
-            unique_table.insert({nodes[i].data, i});
+            unique_table.insert({nodes[i], i});
         }
     }
 
@@ -96,7 +101,7 @@ namespace ClassProject {
      * @author Victor Herbert
      */
     bool Manager::isVariable(BDD_ID x){
-        return nodes[x].data.topVar == x && !isConstant(x);
+        return nodes[x].topVar == x && !isConstant(x);
     }
 
     /**
@@ -118,7 +123,7 @@ namespace ClassProject {
     BDD_ID Manager::createVar(const std::string &label){
         return addNode({
             .label=label,
-            .data={.low=FALSE_ADDRESS, .high=TRUE_ADDRESS, .topVar=nodes.size()}
+            .low=FALSE_ADDRESS, .high=TRUE_ADDRESS, .topVar=nodes.size()
         });
     }
 
@@ -130,11 +135,11 @@ namespace ClassProject {
      * @author Victor Herbert
      */
     BDD_ID Manager::addNode(Node node){
-        if(unique_table.find(node.data) == unique_table.end()){
+        if(unique_table.find(node) == unique_table.end()){
             nodes.push_back(node);
-            unique_table[node.data] = nodes.size()-1;
+            unique_table[node] = nodes.size()-1;
         }
-        return unique_table[node.data];
+        return unique_table[node];
     }
 
     /**
@@ -156,9 +161,13 @@ namespace ClassProject {
         if(t == e) return t;
         //std::cout << i << " " << t << " " << e << std::endl;
 
-        NodeData nodeData = {.low=t, .high=e, .topVar=i};
+        //if(i == t) return ite(i, 1, t);
+        //if(i == e) return ite(i, t, 0);
+    
 
-        if(computed_table.find(nodeData) == computed_table.end()){
+        Node node = {.low=t, .high=e, .topVar=i};
+        //TODO check if label matters for comparison
+        if(computed_table.find(node) == computed_table.end()){
             BDD_ID top = topVar(i);
             if(!isConstant(t))
                 top = std::min(top, topVar(t));
@@ -169,15 +178,15 @@ namespace ClassProject {
             BDD_ID low = ite(coFactorFalse(i,top), coFactorFalse(t,top), coFactorFalse(e,top));
 
             if(high == low){
-                computed_table[nodeData] = high;
+                computed_table[node] = high;
             }
             else{
-                BDD_ID result = addNode({.data={.low=low, .high=high, .topVar=top}});
-                computed_table[nodeData] = result;
+                BDD_ID result = addNode({.low=low, .high=high, .topVar=top});
+                computed_table[node] = result;
             }
         }
 
-        return computed_table[nodeData];
+        return computed_table[node];
     }
 
     /**
@@ -336,14 +345,14 @@ namespace ClassProject {
         if(!isConstant(root)){
             order.push_back(root);
 
-            if(!marc[nodes[root].data.low]){
-                marc[nodes[root].data.low] = true;
-                bfs(nodes[root].data.low, order, marc);
+            if(!marc[nodes[root].low]){
+                marc[nodes[root].low] = true;
+                bfs(nodes[root].low, order, marc);
             }
 
-            if(!marc[nodes[root].data.high]){
-                marc[nodes[root].data.high] = true;
-                bfs(nodes[root].data.high, order, marc);
+            if(!marc[nodes[root].high]){
+                marc[nodes[root].high] = true;
+                bfs(nodes[root].high, order, marc);
             }
         }
     }
@@ -362,17 +371,17 @@ namespace ClassProject {
         std::ofstream file;
         file.open(filepath);
 
-        std::vector<bool> marc (uniqueTableSize(), false);
+        std::vector<bool> marc (nodes.size(), false);
         std::vector<BDD_ID> order;
-        order.reserve(uniqueTableSize());
+        order.reserve(nodes.size());
 
         bfs(root, order, marc);
 
         file << "```mermaid\nstateDiagram-v2\n";
 
         for (BDD_ID node : order){
-            file << node << " --> " << nodes[node].data.low << ": 0\n";
-            file << node << " --> " << nodes[node].data.high << ": 1\n";
+            file << node << " --> " << nodes[node].low << ": 0\n";
+            file << node << " --> " << nodes[node].high << ": 1\n";
         }
         file << "classDef leaf fill:white\nclass 1 leaf\nclass 0 leaf\n```";
 
@@ -388,7 +397,7 @@ namespace ClassProject {
     * @author Kamel Fakih
     */
     BDD_ID Manager::topVar(BDD_ID f){
-        return nodes[f].data.topVar;
+        return nodes[f].topVar;
     }
 
     /**
@@ -399,7 +408,7 @@ namespace ClassProject {
     * @author Kamel Fakih
     */
     BDD_ID Manager::low(BDD_ID f){
-        return nodes[f].data.low;
+        return nodes[f].low;
     }
 
     /**
@@ -410,7 +419,7 @@ namespace ClassProject {
     * @author Kamel Fakih
     */
     BDD_ID Manager::high(BDD_ID f){
-        return nodes[f].data.high;
+        return nodes[f].high;
     }
 
     /**
@@ -420,8 +429,8 @@ namespace ClassProject {
     * @return BDD_ID ID of top variable node
     * @author Victor Herbert
     */
-    NodeData Manager::nodeData(BDD_ID f){
-        return nodes[f].data;
+    Node Manager::node(BDD_ID f){
+        return nodes[f];
     }
 
     /**

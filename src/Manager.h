@@ -7,48 +7,45 @@
 
 #include "ManagerInterface.h"
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <iostream>
 #include <unordered_set>
+#include <functional>
 //#include "gtest/gtest.h"
 // #include "Tests.h"
 
+
 namespace ClassProject {
-
-    struct NodeData{
-        BDD_ID low, high, topVar;
-
-        bool operator < (const NodeData & other) const{
-            if(low == other.low){
-                if(high == other.high){
-                    return topVar < other.topVar;
-                }
-                return high < other.high;
-            }
-            return low < other.low;
-        }
-
-        bool operator== (const NodeData & other) const {
-            return (low == other.low) && (high == other.high) && (topVar == other.topVar);
-        }
-    };
 
     struct Node{
         std::string label;
-        NodeData data;
+        BDD_ID low, high, topVar;
 
-        bool operator== (const Node &other) const {
-            return data == other.data;
+        bool operator == (const Node &other) const {
+            return 
+                (low == other.low) &&
+                (high == other.high) &&
+                (topVar == other.topVar);
         }
 
         friend std::ostream& operator <<(std::ostream& stream, const Node& node);
     };
 
+    template<size_t TABLE_SIZE>
+    struct NodeHashFunction{
+        std::size_t operator()(const Node& node) const{
+            return ((node.low<<16) + (node.high<<32) + (node.topVar<<0)) % TABLE_SIZE;
+        }
+    };
+
+    //template<size_t UNIQUE_TABLE_SIZE = 1e6+3>
     class Manager : ManagerInterface{
+        const static size_t UNIQUE_TABLE_CAPACITY = 1e6+3;
 
         std::vector<Node> nodes;
-        std::map<NodeData, BDD_ID> unique_table; //TODO use hash table
-        std::map<NodeData, BDD_ID> computed_table; //TODO use hash table
+        std::unordered_map<Node, BDD_ID, NodeHashFunction<UNIQUE_TABLE_CAPACITY>> unique_table; //TODO use hash table
+        std::unordered_map<Node, BDD_ID, NodeHashFunction<UNIQUE_TABLE_CAPACITY>> computed_table; //TODO use hash table
+        
 
         const static BDD_ID FALSE_ADDRESS;
         const static BDD_ID TRUE_ADDRESS;
@@ -83,7 +80,7 @@ namespace ClassProject {
 
         BDD_ID topVar(BDD_ID f, BDD_ID g);
 
-        NodeData nodeData(BDD_ID id);
+        Node node(BDD_ID id);
 
         BDD_ID high(BDD_ID f);
 
