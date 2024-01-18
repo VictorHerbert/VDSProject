@@ -6,15 +6,18 @@
 //clear &&  make -C build/ VDSProject_bench && ./build/src/bench/VDSProject_bench benchmarks/iscas85/c3540.bench 
 namespace ClassProject {
 
+    
     std::ostream& operator <<(std::ostream& stream, const Node& node) {
-        return stream << node.label << " : " << node.low << "," << node.high << "," << node.topVar;
-    }    
+        return stream << node.low << "," << node.high << "," << node.topVar;
+    }
 
     const BDD_ID Manager::FALSE_ADDRESS = 0;
     const BDD_ID Manager::TRUE_ADDRESS = 1;
 
-    const Node Manager::FALSE_NODE = {.label = "0", .low = 0, .high = 0, .topVar = Manager::FALSE_ADDRESS};
-    const Node Manager::TRUE_NODE =  {.label = "1", .low = 1, .high = 1, .topVar = Manager::TRUE_ADDRESS};
+    const Node Manager::FALSE_NODE = {.low = 0, .high = 0, .topVar = Manager::FALSE_ADDRESS};
+    const Node Manager::TRUE_NODE =  {.low = 1, .high = 1, .topVar = Manager::TRUE_ADDRESS};
+
+    int count = 0; // FIXME
 
     /**
     * @brief Manager class standard constructor
@@ -26,6 +29,7 @@ namespace ClassProject {
         unique_table.reserve(UNIQUE_TABLE_CAPACITY);
         computed_table.reserve(UNIQUE_TABLE_CAPACITY);
         nodes = {FALSE_NODE, TRUE_NODE};
+        labels = {{0, "0"}, {1, "1"}};
         unique_table.insert({{.low = 0, .high = 0, .topVar = Manager::FALSE_ADDRESS}, FALSE_ADDRESS});
         unique_table.insert({{.low = 1, .high = 1, .topVar = Manager::TRUE_ADDRESS}, TRUE_ADDRESS});
     }
@@ -121,10 +125,11 @@ namespace ClassProject {
     * @author Victor Herbert
     */
     BDD_ID Manager::createVar(const std::string &label){
-        return addNode({
-            .label=label,
+        BDD_ID id = addNode({
             .low=FALSE_ADDRESS, .high=TRUE_ADDRESS, .topVar=nodes.size()
         });
+        labels[id] = label;
+        return id;
     }
 
     /**
@@ -159,11 +164,8 @@ namespace ClassProject {
         if(i == False()) return e;
         if(t == True() and e == False()) return i;
         if(t == e) return t;
-        //std::cout << i << " " << t << " " << e << std::endl;
 
-        //if(i == t) return ite(i, 1, t);
-        //if(i == e) return ite(i, t, 0);
-    
+        if(t == 0 and e == 1) count++;
 
         Node node = {.low=t, .high=e, .topVar=i};
         //TODO check if label matters for comparison
@@ -198,9 +200,9 @@ namespace ClassProject {
      * @param op string containning the name of the operation
      * @author Victor Herbert
      */
-    void Manager::updateNodeLabel(BDD_ID id, BDD_ID a, BDD_ID b, std::string op){
-        if(nodes[id].label == "")
-            nodes[id].label = op + "(" + nodes[a].label + "," + nodes[b].label + ")";
+    void Manager::updateNodeLabel(BDD_ID id, BDD_ID a, BDD_ID b, std::string op){    
+        if(labels.find(id) == labels.end())
+            labels[id] = op + "(" + labels[a] + "," + labels[b] + ")";
     }
 
     /**
@@ -211,7 +213,7 @@ namespace ClassProject {
      * @author Kamel Fakih
      */
     std::string Manager::getTopVarName(const BDD_ID &root){
-        return nodes[topVar(root)].label;
+        return labels[topVar(root)];
     }
 
     /**

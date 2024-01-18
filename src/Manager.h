@@ -18,7 +18,6 @@
 namespace ClassProject {
 
     struct Node{
-        std::string label;
         BDD_ID low, high, topVar;
 
         bool operator == (const Node &other) const {
@@ -45,7 +44,8 @@ namespace ClassProject {
         std::vector<Node> nodes;
         std::unordered_map<Node, BDD_ID, NodeHashFunction<UNIQUE_TABLE_CAPACITY>> unique_table; //TODO use hash table
         std::unordered_map<Node, BDD_ID, NodeHashFunction<UNIQUE_TABLE_CAPACITY>> computed_table; //TODO use hash table
-        
+
+        std::unordered_map<int, std::string> labels;
 
         const static BDD_ID FALSE_ADDRESS;
         const static BDD_ID TRUE_ADDRESS;

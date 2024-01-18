@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PART2_DIR_DEFAULT=""
+PART2_DIR_DEFAULT="part2"
 
 show_help() {
     echo "Usage: $0 [circuit]"
@@ -30,7 +30,7 @@ fi
 
 # set default test circuit
 if [ -z $1 ]; then    
-    circuit="c432"
+    circuit="c3540"
 else
     circuit=$1
 fi
@@ -40,10 +40,26 @@ echo "running benchmark (circuit $circuit):"
 eval "$PROJECT_DIR/build/src/bench/VDSProject_bench" "$PART2_DIR/benchmarks/iscas85/$circuit.bench"
 
 echo "running verify (circuit $circuit):"
+echo ""
 
+FAIL_LIST=()
+
+echo -n "Verifying "
 for file in "$PROJECT_DIR/results_$circuit"/txt/*; do
     if [ -f "$file" ]; then        
-        echo "file : $(basename $file)"     
-        eval "$PROJECT_DIR/build/src/verify/VDSProject_verify" "$PROJECT_DIR/results_$circuit/txt/$(basename $file)" "$PART2_DIR/results/results_$circuit/txt/$(basename $file)"
+        #echo "file : $(basename $file)" 
+        #eval "$PROJECT_DIR/build/src/verify/VDSProject_verify" "$PROJECT_DIR/results_$circuit/txt/$(basename $file)" "$PART2_DIR/results/results_$circuit/txt/$(basename $file)"
+        
+        if "$PROJECT_DIR/build/src/verify/VDSProject_verify" "$PROJECT_DIR/results_$circuit/txt/$(basename $file)" "$PART2_DIR/results/results_$circuit/txt/$(basename $file)"; then
+            echo -n "."
+        else
+            echo -n "x"
+            FAIL_LIST+=("$(basename $file)")
+        fi
     fi
 done    
+
+echo " Done!"
+echo ""
+echo "Fail at files:"
+echo "${FAIL_LIST[*]}" | tr ' ' '\n'

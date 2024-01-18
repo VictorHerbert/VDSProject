@@ -11,6 +11,8 @@
 #include "CircuitToBDD.hpp"
 #include "BenchmarkLib.h"
 
+
+
 int main(int argc, char *argv[]) {
 
     if (2 > argc) {

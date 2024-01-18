@@ -122,9 +122,11 @@ int main(int argc, char* argv[])
 	}
 
 	if( isEquivalent(BDD1, BDD2, BDD1.rbegin()->first, BDD2.rbegin()->first) )
-		std::cout<<"Equivalent!"<<std::endl;
+		//std::cout<<"Equivalent!"<<std::endl;
+		return 0;
 	else
-		std::cout<<"Not Equivalent!"<<std::endl;
+		//std::cout<<"Not Equivalent!"<<std::endl;
+		return 1;
 	return 0;
 }
 

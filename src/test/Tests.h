@@ -30,14 +30,11 @@ namespace ClassProject {
         Manager testObj;
 
         void SetUp() override {
-            testObj = Manager({
-                {.label = "0", .low = 0, .high = 0, .topVar = 0},
-                {.label = "1", .low = 1, .high = 1, .topVar = 1},
-                {.label = "a", .low = 0, .high = 1, .topVar = 2},
-                {.label = "b", .low = 0, .high = 1, .topVar = 3},
-                {.label = "c", .low = 0, .high = 1, .topVar = 4},
-                {.label = "d", .low = 0, .high = 1, .topVar = 5}
-            });
+            testObj = Manager();            
+            testObj.createVar("a");
+            testObj.createVar("b");
+            testObj.createVar("c");
+            testObj.createVar("d");
         }
     };
 
@@ -48,16 +45,25 @@ namespace ClassProject {
         Manager testObj;
 
         void SetUp() override {
-            testObj = Manager(std::vector<Node>{
+            /*testObj = Manager(std::vector<Node>{
                 {.label = "0", .low = 0, .high = 0, .topVar = 0},
                 {.label = "1", .low = 1, .high = 1, .topVar = 1},
                 {.label = "a", .low = 0, .high = 1, .topVar = 2},
                 {.label = "b", .low = 0, .high = 1, .topVar = 3},
                 {.label = "c", .low = 0, .high = 1, .topVar = 4},
                 {.label = "d", .low = 0, .high = 1, .topVar = 5},
+
                 {.label = "a+b", .low = 3, .high = 1, .topVar = 2},
                 {.label = "c*d", .low = 0, .high = 5, .topVar = 4}
-            });
+            });*/
+
+            testObj = Manager();            
+            BDD_ID a = testObj.createVar("a");
+            BDD_ID b = testObj.createVar("b");
+            BDD_ID c = testObj.createVar("c");
+            BDD_ID d = testObj.createVar("d");
+            testObj.or2(a, b);
+            testObj.and2(c, d);
         }
     };
 
