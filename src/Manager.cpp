@@ -167,6 +167,40 @@ namespace ClassProject {
 
         if(t == 0 and e == 1) count++;
 
+        // standard triples (excluding complements)        
+        if(isExpression(t)){
+            // ite(F, G, F) == ite(F, G, 0) 
+            if(i == e){
+                e = False();                
+            }
+
+            // ite(F, G, 0) == ite(G, F, 0)
+            if(e == False()){
+                BDD_ID temp;
+                if(topVar(t) < topVar(i) || (topVar(t) == topVar(i) && t < i)){
+                    temp = i;
+                    i = t;
+                    t = temp;                    
+                }
+            }  
+        }else if (isExpression(e)){
+            // ite(F, 1, G) == ite(G, 1, F)
+            // F is chosen to be the minimum between F and G based on the order topVar,id
+            if(t == True()){
+                BDD_ID temp;
+                if(topVar(e) < topVar(i) || (topVar(e) == topVar(i) && t < i)){
+                    temp = i;
+                    i = e;
+                    e = temp;                    
+                }
+            }
+
+            // ite(F, F, G) == ite(F, 1, G) 
+            if(i == t){
+                t = True();                
+            }
+        }
+
         Node node = {.low=t, .high=e, .topVar=i};
         //TODO check if label matters for comparison
         if(computed_table.find(node) == computed_table.end()){
