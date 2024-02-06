@@ -47,7 +47,19 @@ namespace ClassProject {
      * @param initial_state 
      * @return BDD_ID 
      */
-    BDD_ID compute_image(BDD_ID transition_relation, BDD_ID starting_state);
+
+    /**
+     * @brief computes the characteristic function of the image (next state set) 
+     * 
+     * takes the starting state, next state variables and transition relations as inputs. then computes
+     * the image using early quantification
+     * 
+     * @param next_state_variables 
+     * @param transition_functions 
+     * @param starting_state 
+     * @return BDD_ID 
+     */
+    BDD_ID compute_image(BDD_ID starting_state);
 
     public:
 
