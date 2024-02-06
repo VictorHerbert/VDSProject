@@ -41,22 +41,10 @@ namespace ClassProject {
         BDD_ID tau, cs0, cr, cri, img;
 
         // compute the BDD for the transition relation
-        tau = this->xnor2(next_state_variables[0], transition_functions[0]);
-        for(int i=1; i<state_variables.size(); i++){
-            tau = this->and2(
-                tau,
-                this->xnor2(next_state_variables[i], transition_functions[i])
-            );
-        }
+        tau = characteristic_function(next_state_variables, transition_functions);        
         
         // compute the characteristic function of the initial state
-        cs0 = this->xnor2(state_variables[0], initial_state[0]);
-        for(int i=1; i<state_variables.size(); i++){
-            cs0 = this->and2(
-                cs0,
-                this->xnor2(state_variables[i], initial_state[i])
-            );
-        }
+        cs0 = characteristic_function(state_variables, initial_state);        
 
         // fixed point iteration
         cri = cs0;
@@ -65,27 +53,7 @@ namespace ClassProject {
             cr = cri;
 
             // compute image of next state variables (step 7)
-            img = this->and2(tau, cr);
-
-            // existential quantification with respect to current state variables
-            for(int i=0; i<state_variables.size(); i++){
-                img = this->or2(this->coFactorTrue(img, state_variables[i]), this->coFactorFalse(img, state_variables[i]));
-            }
-
-            // existential quantification with respect to the input variables 
-            for(int i=0; i<input_variables.size(); i++){
-                img = this->or2(this->coFactorTrue(img, input_variables[i]), this->coFactorFalse(img, input_variables[i]));
-            }
-
-            // rename next state variables into current state variables (step 8)
-            for(int i=0; i<state_variables.size(); i++){
-                img = this->and2(img, this->xnor2(this->state_variables[i], this->next_state_variables[i]));
-            }
-
-            // existential quantification with respect to the next state variables
-            for(int i=0; i<next_state_variables.size(); i++){
-                img = this->or2(this->coFactorTrue(img, next_state_variables[i]), this->coFactorFalse(img, next_state_variables[i]));
-            }            
+            img = compute_image(tau, cr);          
 
             cri = this->or2(cr, img);
 
@@ -98,9 +66,7 @@ namespace ClassProject {
         }
 
         // existential quantification with respect to the next state variables
-        for(int i=0; i<state_variables.size(); i++){
-            cri = this->or2(this->coFactorTrue(cri, state_variables[i]), this->coFactorFalse(cri, state_variables[i]));
-        }      
+        cri = existential_quantification(cri, state_variables);    
 
         return cri == True();      
     }
@@ -120,6 +86,48 @@ namespace ClassProject {
         for(int i=0; i<stateVector.size(); i++){
             this->initial_state[i] = stateVector[i] ? True() : False();
         }
+    }
+
+    BDD_ID Reachability::existential_quantification(BDD_ID equation, std::vector<BDD_ID> variables)
+    {
+        BDD_ID eq = equation;
+        for(int i=0; i<variables.size(); i++){
+            eq = this->or2(this->coFactorTrue(eq, variables[i]), this->coFactorFalse(eq, variables[i]));
+        }
+
+        return eq;
+    }
+
+    BDD_ID Reachability::characteristic_function(std::vector<BDD_ID> equations, std::vector<BDD_ID> variables)
+    {
+        BDD_ID cs = this->xnor2(variables[0], equations[0]);
+        for(int i=1; i<equations.size(); i++){
+            cs = this->and2(
+                cs,
+                this->xnor2(variables[i], equations[i])
+            );
+        }
+
+        return cs;
+    }
+
+    BDD_ID Reachability::compute_image(BDD_ID tau, BDD_ID cr)
+    {
+        // compute image for next state variables
+        BDD_ID image = this->and2(tau, cr);
+
+        // get rid of the input and the current state variables
+        // (we are only interested in the reached states, not how to reach them)
+        image = existential_quantification(image, state_variables);
+        image = existential_quantification(image, input_variables);
+
+        // rename the next state variables into current state variables for next iteration
+        for(int i=0; i<state_variables.size(); i++){
+            image = this->and2(image, this->xnor2(this->state_variables[i], this->next_state_variables[i]));
+        }
+        image = existential_quantification(image, next_state_variables);
+
+        return image;
     }
 
 }
