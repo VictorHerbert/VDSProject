@@ -59,7 +59,7 @@ namespace ClassProject {
         }
 
         // fixed point iteration
-        cr = cs0;
+        cri = cs0;
         do {
 
             cr = cri;
@@ -116,8 +116,10 @@ namespace ClassProject {
     }
 
     void Reachability::setInitState(const std::vector<bool> &stateVector)
-    {
-        this->initial_state = stateVector;
+    {        
+        for(int i=0; i<stateVector.size(); i++){
+            this->initial_state[i] = stateVector[i] ? True() : False();
+        }
     }
 
 }
