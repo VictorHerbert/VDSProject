@@ -6,30 +6,56 @@
 
 using namespace ClassProject;
 
+template <int state_size, int input_size = 0>
 struct ReachabilityTest : testing::Test {
 
-    std::unique_ptr<ClassProject::ReachabilityInterface> fsm2 = std::make_unique<ClassProject::Reachability>(2);
+    std::unique_ptr<ClassProject::Reachability> fsm = std::make_unique<ClassProject::Reachability>(state_size, input_size);
 
-    std::vector<BDD_ID> stateVars2 = fsm2->getStates();
-    std::vector<BDD_ID> transitionFunctions;
+    std::vector<BDD_ID> stateVars = fsm->getStates();
+    std::vector<BDD_ID> inputVars = fsm->getInputs();
+    std::vector<BDD_ID> transitionFunctions = fsm->getTransitionFunctions();
+    std::vector<bool> initialState = fsm->getInitState();
 
 };
 
-TEST_F(ReachabilityTest, HowTo_Example) { /* NOLINT */
+struct ReachabilityTest20 : ReachabilityTest<2,0> {};
+struct ReachabilityTest22 : ReachabilityTest<2,2> {};
 
-    BDD_ID s0 = stateVars2.at(0);
-    BDD_ID s1 = stateVars2.at(1);
+TEST(ReachabilityTestConstructor, ConstructorStateSize) {
 
-    transitionFunctions.push_back(fsm2->neg(s0)); // s0' = not(s0)
-    transitionFunctions.push_back(fsm2->neg(s1)); // s1' = not(s1)
-    fsm2->setTransitionFunctions(transitionFunctions);
+    EXPECT_THROW(
+        ClassProject::Reachability(0), 
+        std::runtime_error
+    );
+    EXPECT_NO_THROW(
+        ClassProject::Reachability(1)        
+    );
 
-    fsm2->setInitState({false,false});
+}
 
-    ASSERT_TRUE(fsm2->isReachable({false, false}));
-    ASSERT_FALSE(fsm2->isReachable({false, true}));
-    ASSERT_FALSE(fsm2->isReachable({true, false}));
-    ASSERT_TRUE(fsm2->isReachable({true, true}));
+TEST_F(ReachabilityTest20, ConstructorInputSize){
+
+    // check if state variables were properly initialized 
+    EXPECT_EQ(stateVars.size(), 2);
+    EXPECT_EQ(inputVars.size(), 0);
+
+    // check if the transition functions were properly initialized
+    ASSERT_EQ(transitionFunctions.size(), 2);
+
+    EXPECT_EQ(transitionFunctions[0], stateVars[0]);
+    EXPECT_EQ(transitionFunctions[1], stateVars[1]);
+
+    // check if intitial state was properly initialized
+    ASSERT_EQ(initialState.size(), 2); 
+
+    EXPECT_EQ(initialState[0], false);
+    EXPECT_EQ(initialState[1], false);
+}
+
+TEST_F(ReachabilityTest22, ConstructorDefaults){
+
+    // check if state variables were properly initialized     
+    EXPECT_EQ(inputVars.size(), 2);    
 }
 
 #endif
