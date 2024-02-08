@@ -13,8 +13,8 @@ struct ReachabilityTest : testing::Test {
 
     std::vector<BDD_ID> stateVars = fsm->getStates();
     std::vector<BDD_ID> inputVars = fsm->getInputs();
-    std::vector<BDD_ID> transitionFunctions = fsm->getTransitionFunctions();
-    std::vector<bool> initialState = fsm->getInitState();
+    std::vector<BDD_ID> transitionFunctions;
+    std::vector<bool> initialState;
 
 };
 
@@ -40,6 +40,9 @@ TEST_F(ReachabilityTest20, ConstructorInputSize){
     EXPECT_EQ(inputVars.size(), 0);
 
     // check if the transition functions were properly initialized
+    transitionFunctions = fsm->getTransitionFunctions();
+    initialState = fsm->getInitState();
+
     ASSERT_EQ(transitionFunctions.size(), 2);
 
     EXPECT_EQ(transitionFunctions[0], stateVars[0]);
@@ -56,6 +59,72 @@ TEST_F(ReachabilityTest22, ConstructorDefaults){
 
     // check if state variables were properly initialized     
     EXPECT_EQ(inputVars.size(), 2);    
+}
+
+TEST_F(ReachabilityTest22, setInitStateException){
+    
+    EXPECT_THROW(
+        fsm->setInitState({true, true, false}),
+        std::runtime_error
+    );    
+}
+
+TEST_F(ReachabilityTest22, setInitState){
+    
+    fsm->setInitState({true, true});
+
+    EXPECT_EQ((fsm->getInitState()).at(0), true);
+    EXPECT_EQ((fsm->getInitState()).at(1), true);       
+}
+
+TEST_F(ReachabilityTest22, setTransitionFunctionsException1){
+
+    BDD_ID s0 = stateVars.at(0);
+    BDD_ID s1 = stateVars.at(1);
+
+    transitionFunctions.push_back(fsm->neg(s0)); // s0' = not(s0)
+    transitionFunctions.push_back(fsm->neg(s1)); // s1' = not(s1)
+    transitionFunctions.push_back(fsm->neg(s1)); // s1' = not(s1)    
+
+    EXPECT_THROW(
+        fsm->setTransitionFunctions(transitionFunctions),
+        std::runtime_error
+    );    
+}
+
+TEST_F(ReachabilityTest22, setTransitionFunctionsException2){
+
+    BDD_ID s0 = stateVars.at(0);
+    BDD_ID s1 = stateVars.at(1);
+
+    transitionFunctions.push_back(fsm->neg(s0)); // s0' = not(s0)
+    transitionFunctions.push_back(100); // unknown ID
+
+    EXPECT_THROW(
+        fsm->setTransitionFunctions(transitionFunctions),
+        std::runtime_error
+    );    
+}
+
+TEST_F(ReachabilityTest22, setTransitionFunctions){
+
+    BDD_ID s0 = stateVars.at(0);
+    BDD_ID s1 = stateVars.at(1);
+
+    transitionFunctions.push_back(fsm->neg(s0)); // s0' = not(s0)
+    transitionFunctions.push_back(fsm->neg(s1)); // s1' = not(s1)
+
+    fsm->setTransitionFunctions(transitionFunctions);
+
+    EXPECT_EQ(
+        (fsm->getTransitionFunctions()).at(0),
+        transitionFunctions.at(0)
+    );
+
+    EXPECT_EQ(
+        (fsm->getTransitionFunctions()).at(1),
+        transitionFunctions.at(1)
+    );
 }
 
 #endif

@@ -93,10 +93,10 @@ namespace ClassProject {
     }
 
     const std::vector<bool> Reachability::Reachability::getInitState(){
-        std::vector<bool> initial_state = std::vector<bool>(this->initial_state.size());
+        std::vector<bool> initial_state = std::vector<bool>();
         for(auto s : this->initial_state){
-            initial_state.push_back(s == True() ? true : false);
-        }
+            initial_state.push_back(s == True() ? true : false);                        
+        }    
         return initial_state;
     }
 
