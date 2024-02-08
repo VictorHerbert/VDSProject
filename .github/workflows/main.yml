@@ -17,5 +17,7 @@ jobs:
       run: cmake -S . -B build
     - name: Build project
       run:  cmake --build build
-    - name: Run test
+    - name: Run Tests
       run: cd build/src/test && ./VDSProject_test
+    - name: Run Reachability Tests
+      run: cd build/src/reachability && ./VDSProject_reachability
