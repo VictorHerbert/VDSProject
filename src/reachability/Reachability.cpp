@@ -88,6 +88,18 @@ namespace ClassProject {
         }
     }
 
+    const std::vector<BDD_ID> Reachability::getTransitionFunctions(){
+        return this->transition_functions;
+    }
+
+    const std::vector<bool> Reachability::Reachability::getInitState(){
+        std::vector<bool> initial_state = std::vector<bool>(this->initial_state.size());
+        for(auto s : this->initial_state){
+            initial_state.push_back(s == True() ? true : false);
+        }
+        return initial_state;
+    }
+
     BDD_ID Reachability::existential_quantification(BDD_ID equation, std::vector<BDD_ID> variables)
     {
         BDD_ID eq = equation;

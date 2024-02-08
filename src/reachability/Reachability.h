@@ -59,6 +59,8 @@ namespace ClassProject {
     int stateDistance(const std::vector<bool> &stateVector);
     void setTransitionFunctions(const std::vector<BDD_ID> &transitionFunctions);        
     void setInitState(const std::vector<bool> &stateVector);
+    const std::vector<BDD_ID> getTransitionFunctions();        
+    const std::vector<bool>   getInitState();
 
    };
 }
