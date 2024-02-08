@@ -8,6 +8,9 @@ namespace ClassProject {
         transition_functions(stateSize),    // initialized by user (setTransitionFunctions)
         initial_state(stateSize)            // initialized by user (setInitState)
     {
+        if(stateSize <= 0)
+            throw std::runtime_error("stateSize must be greater than zero");
+            
         // create current state, next state, and input variables
         state_variables = std::vector<BDD_ID>(stateSize);
         for(int i=0; i<stateSize; i++){
@@ -73,16 +76,29 @@ namespace ClassProject {
 
     int Reachability::stateDistance(const std::vector<bool> &stateVector)
     {
+        if(stateVector.size() != state_variables.size())
+            throw std::runtime_error("Vector size does not match state variables");
+
         return -1;
     }
 
     void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionFunctions)
     {
+        for(BDD_ID id : transitionFunctions)
+            if(id < 0 || id >= state_variables.size())
+                throw std::runtime_error("Unknown ID found");
+
+        if(transitionFunctions.size() != state_variables.size())
+            throw std::runtime_error("Vector size does not match state variables");
+
         this->transition_functions = transitionFunctions;
     }
 
     void Reachability::setInitState(const std::vector<bool> &stateVector)
-    {        
+    {   
+        if(stateVector.size() != state_variables.size())
+            throw std::runtime_error("Vector size does not match state variables");
+
         for(int i=0; i<stateVector.size(); i++){
             this->initial_state[i] = stateVector[i] ? True() : False();
         }
