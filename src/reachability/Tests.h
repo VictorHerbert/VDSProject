@@ -21,7 +21,7 @@ struct ReachabilityTest : testing::Test {
 struct ReachabilityTest20 : ReachabilityTest<2,0> {};
 struct ReachabilityTest22 : ReachabilityTest<2,2> {};
 
-TEST(ReachabilityTestConstructor, ConstructorStateSize) {
+TEST(ReachabilityTestConstructor, ConstructorStateSizeException) {
 
     EXPECT_THROW(
         ClassProject::Reachability(0), 
@@ -33,7 +33,7 @@ TEST(ReachabilityTestConstructor, ConstructorStateSize) {
 
 }
 
-TEST_F(ReachabilityTest20, ConstructorInputSize){
+TEST_F(ReachabilityTest20, ConstructorDefaults){
 
     // check if state variables were properly initialized 
     EXPECT_EQ(stateVars.size(), 2);
@@ -55,7 +55,7 @@ TEST_F(ReachabilityTest20, ConstructorInputSize){
     EXPECT_EQ(initialState[1], false);
 }
 
-TEST_F(ReachabilityTest22, ConstructorDefaults){
+TEST_F(ReachabilityTest22, ConstructorInputSize){
 
     // check if state variables were properly initialized     
     EXPECT_EQ(inputVars.size(), 2);    
@@ -74,7 +74,12 @@ TEST_F(ReachabilityTest22, setInitState){
     fsm->setInitState({true, true});
 
     EXPECT_EQ((fsm->getInitState()).at(0), true);
-    EXPECT_EQ((fsm->getInitState()).at(1), true);       
+    EXPECT_EQ((fsm->getInitState()).at(1), true);    
+
+    fsm->setInitState({false, true});
+
+    EXPECT_EQ((fsm->getInitState()).at(0), false);
+    EXPECT_EQ((fsm->getInitState()).at(1), true);      
 }
 
 TEST_F(ReachabilityTest22, setTransitionFunctionsException1){
