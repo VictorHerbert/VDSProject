@@ -156,11 +156,16 @@ TEST_F(ReachabilityTest20, stateDistanceTestBasic){
 
     fsm->setTransitionFunctions(transitionFunctions);
     fsm->setInitState({false, true});
-    EXPECT_EQ(fsm->stateDistance({false, false}), -1);    
+
+    /*EXPECT_EQ(fsm->stateDistance({false, false}), -1);    
     EXPECT_EQ(fsm->stateDistance({false, false}),  0);    
     EXPECT_EQ(fsm->stateDistance({true, true}),    1);    
-    EXPECT_EQ(fsm->stateDistance({true, false}),   2);    
+    EXPECT_EQ(fsm->stateDistance({true, false}),   2);    */
 
+    EXPECT_EQ(fsm->stateDistance({0, 0}), Reachability::UNREACHABLE);    
+    EXPECT_EQ(fsm->stateDistance({0, 1}), 0);    
+    EXPECT_EQ(fsm->stateDistance({1, 0}), 1);    
+    EXPECT_EQ(fsm->stateDistance({1, 1}),  Reachability::UNREACHABLE);    
 }
 
 TEST_F(ReachabilityTest31, stateDistanceTest){

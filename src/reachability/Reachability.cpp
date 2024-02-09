@@ -3,10 +3,10 @@
 
 namespace ClassProject {
 
+    const int Reachability::UNREACHABLE = -1;
+
     Reachability::Reachability(unsigned int stateSize, unsigned int inputSize)    
-        : ReachabilityInterface(stateSize, inputSize),                
-        transition_functions(stateSize),    // initialized by user (setTransitionFunctions)
-        initial_state(stateSize)            // initialized by user (setInitState)
+        : ReachabilityInterface(stateSize, inputSize)                
     {
         if(stateSize <= 0)
             throw std::runtime_error("stateSize must be greater than zero");
@@ -26,6 +26,16 @@ namespace ClassProject {
         for(int i=0; i<inputSize; i++){
             input_variables[i] = createVar("-");
         }
+
+        transition_functions = std::vector<BDD_ID>(stateSize);
+        for(int i=0; i<stateSize; i++){
+            transition_functions[i] = state_variables[i];
+        }
+
+        initial_state = std::vector<BDD_ID>(stateSize);
+        for(int i=0; i<stateSize; i++){
+            initial_state[i] = False();
+        }
     }
 
     const std::vector<BDD_ID> &Reachability::getStates() const
@@ -40,8 +50,19 @@ namespace ClassProject {
 
     bool Reachability::isReachable(const std::vector<bool> &stateVector)
     {
+        return stateDistance(stateVector) != UNREACHABLE;
+    }
+
+    int Reachability::stateDistance(const std::vector<bool> &stateVector)
+    {
+        if(stateVector.size() != state_variables.size())
+            throw std::runtime_error("Vector size does not match state variables");
+
+        if(stateVector == getInitState())
+            return 0;
 
         BDD_ID tau, cs0, cr, cri, img;
+        int distance = -1;
 
         // compute the BDD for the transition relation
         tau = characteristic_function(next_state_variables, transition_functions);        
@@ -59,6 +80,7 @@ namespace ClassProject {
             img = compute_image(tau, cr);          
 
             cri = this->or2(cr, img);
+            distance++;
 
         } while(cri != cr);
 
@@ -71,21 +93,13 @@ namespace ClassProject {
         // existential quantification with respect to the next state variables
         cri = existential_quantification(cri, state_variables);    
 
-        return cri == True();      
-    }
-
-    int Reachability::stateDistance(const std::vector<bool> &stateVector)
-    {
-        if(stateVector.size() != state_variables.size())
-            throw std::runtime_error("Vector size does not match state variables");
-
-        return -1;
+        return (cri == True()) ? distance : UNREACHABLE;
     }
 
     void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionFunctions)
     {
         for(BDD_ID id : transitionFunctions)
-            if(id < 0 || id >= state_variables.size())
+            if(id < 0 || id >= uniqueTableSize())
                 throw std::runtime_error("Unknown ID found");
 
         if(transitionFunctions.size() != state_variables.size())
