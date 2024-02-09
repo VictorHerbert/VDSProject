@@ -20,6 +20,7 @@ struct ReachabilityTest : testing::Test {
 
 struct ReachabilityTest20 : ReachabilityTest<2,0> {};
 struct ReachabilityTest22 : ReachabilityTest<2,2> {};
+struct ReachabilityTest31 : ReachabilityTest<3,1> {};
 
 TEST(ReachabilityTestConstructor, ConstructorStateSizeException) {
 
@@ -130,6 +131,101 @@ TEST_F(ReachabilityTest22, setTransitionFunctions){
         (fsm->getTransitionFunctions()).at(1),
         transitionFunctions.at(1)
     );
+}
+
+
+TEST_F(ReachabilityTest31, stateDistanceException){
+    EXPECT_THROW(
+        fsm->stateDistance({false, false}),
+        std::runtime_error
+    );
+}
+
+TEST_F(ReachabilityTest20, stateDistanceTestBasic){
+
+    BDD_ID s1 = stateVars.at(0);
+    BDD_ID s2 = stateVars.at(1);
+
+    transitionFunctions.push_back(s2);
+    transitionFunctions.push_back(
+        fsm->or2(
+            fsm->and2(fsm->neg(s1), fsm->neg(s2)),
+            s1
+        )
+    );
+
+    fsm->setTransitionFunctions(transitionFunctions);
+    fsm->setInitState({false, true});
+    EXPECT_EQ(fsm->stateDistance({false, false}), -1);    
+    EXPECT_EQ(fsm->stateDistance({false, false}),  0);    
+    EXPECT_EQ(fsm->stateDistance({true, true}),    1);    
+    EXPECT_EQ(fsm->stateDistance({true, false}),   2);    
+
+}
+
+TEST_F(ReachabilityTest31, stateDistanceTest){
+
+    BDD_ID s1 = stateVars.at(0);
+    BDD_ID s2 = stateVars.at(1);
+    BDD_ID s3 = stateVars.at(2);
+    BDD_ID x  = inputVars.at(0);
+
+    transitionFunctions.push_back(
+        fsm->or2(
+            fsm->or2(
+                fsm->and2(s1,fsm->and2(fsm->neg(s2), fsm->neg(s3))),
+                fsm->and2(x,fsm->and2(s1, fsm->neg(s2)))
+            ), 
+            fsm->or2(
+                fsm->and2(fsm->neg(x),fsm->and2(s2,s3)),
+                fsm->and2(s1, fsm->and2(s2, s3))
+            )       
+        )
+    );
+
+    transitionFunctions.push_back(
+        fsm->or2(
+            fsm->or2(
+                fsm->and2(fsm->neg(s1),fsm->and2(fsm->neg(s2), s3)),
+                fsm->and2(fsm->neg(s1),fsm->and2(s2, fsm->neg(s3)))
+            ), 
+            fsm->or2(fsm->and2(x, s3),fsm->and2(x, fsm->neg(s1)))       
+        )
+    );   
+
+    transitionFunctions.push_back(
+        fsm->or2(
+            fsm->or2(
+                fsm->and2(s1,fsm->and2(s2, fsm->neg(s3))),
+                fsm->and2(fsm->neg(s1),fsm->and2(s3, fsm->neg(s2)))
+            ), 
+            fsm->and2(
+                fsm->neg(x),
+                fsm->and2(fsm->neg(s1),fsm->neg(s2))
+            )            
+        )
+    );    
+
+    fsm->setTransitionFunctions(transitionFunctions);
+
+    fsm->setInitState({false, false, false});
+    EXPECT_EQ(fsm->stateDistance({true, true, true}),   -1);    
+    EXPECT_EQ(fsm->stateDistance({false, false, false}), 0);    
+    EXPECT_EQ(fsm->stateDistance({false, true, false}),  1); 
+    EXPECT_EQ(fsm->stateDistance({false, false, true}),  1);    
+    EXPECT_EQ(fsm->stateDistance({false, true, true}),   2);    
+    EXPECT_EQ(fsm->stateDistance({true, false, false}),  3);    
+
+    fsm->setInitState({false, false, true});
+    EXPECT_EQ(fsm->stateDistance({false, false, false}),-1);    
+    EXPECT_EQ(fsm->stateDistance({true, true, true}),   -1);    
+    EXPECT_EQ(fsm->stateDistance({false, false, true}),  0);    
+    EXPECT_EQ(fsm->stateDistance({false, true, true}),   1);    
+    EXPECT_EQ(fsm->stateDistance({false, true, false}),  2); 
+    EXPECT_EQ(fsm->stateDistance({true, false, false}),  2);
+
+    fsm->setInitState({true, false, true});    
+    EXPECT_EQ(fsm->stateDistance({false, true, true}),   3);        
 }
 
 #endif
