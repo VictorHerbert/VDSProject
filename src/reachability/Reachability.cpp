@@ -62,7 +62,8 @@ namespace ClassProject {
             return 0;
 
         BDD_ID tau, cs0, cr, cri, img;
-        int distance = -1;
+        
+        int distance = 0;
 
         // compute the BDD for the transition relation
         tau = characteristic_function(next_state_variables, transition_functions);        
@@ -82,18 +83,21 @@ namespace ClassProject {
             cri = this->or2(cr, img);
             distance++;
 
-        } while(cri != cr);
+            // check if the stateVector belong to the reachable state space
+            BDD_ID temp = cri;
+            for(int i=0; i<stateVector.size(); i++){
+                BDD_ID sv = stateVector[i] ? True() : False();
+                temp = this->and2(temp, this->xnor2(sv, state_variables[i]));
+            }
 
-        // check if the stateVector belong to the reachable state space
-        for(int i=0; i<stateVector.size(); i++){
-            BDD_ID sv = stateVector[i] ? True() : False();
-            cri = this->and2(cri, this->xnor2(sv, state_variables[i]));
-        }
+            // existential quantification with respect to the next state variables
+            temp = existential_quantification(temp, state_variables);    
 
-        // existential quantification with respect to the next state variables
-        cri = existential_quantification(cri, state_variables);    
+            if(temp == True()) return distance;
 
-        return (cri == True()) ? distance : UNREACHABLE;
+        } while(cri != cr);        
+
+        return UNREACHABLE;
     }
 
     void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionFunctions)
