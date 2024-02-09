@@ -146,7 +146,7 @@ TEST_F(ReachabilityTest20, stateDistanceTestBasic){
     BDD_ID s1 = stateVars.at(0);
     BDD_ID s2 = stateVars.at(1);
 
-    transitionFunctions.push_back(s2);
+    transitionFunctions.push_back(fsm->xor2(s1,s2));
     transitionFunctions.push_back(
         fsm->or2(
             fsm->and2(fsm->neg(s1), fsm->neg(s2)),
@@ -165,10 +165,10 @@ TEST_F(ReachabilityTest20, stateDistanceTestBasic){
     EXPECT_EQ(fsm->stateDistance({0, 0}), Reachability::UNREACHABLE);
     EXPECT_EQ(fsm->stateDistance({0, 1}), 0);
     EXPECT_EQ(fsm->stateDistance({1, 0}), 1);
-    EXPECT_EQ(fsm->stateDistance({1, 1}),  Reachability::UNREACHABLE);
+    EXPECT_EQ(fsm->stateDistance({1, 1}), 2);
 }
 
-/*TEST_F(ReachabilityTest31, stateDistanceTest){
+TEST_F(ReachabilityTest31, stateDistanceTest){
 
     BDD_ID s1 = stateVars.at(0);
     BDD_ID s2 = stateVars.at(1);
@@ -231,7 +231,182 @@ TEST_F(ReachabilityTest20, stateDistanceTestBasic){
 
     fsm->setInitState({true, false, true});
     EXPECT_EQ(fsm->stateDistance({false, true, true}),   3);
-}*/
+}
 
+TEST_F(ReachabilityTest20, isReachableTestBasic){
+
+    BDD_ID s1 = stateVars.at(0);
+    BDD_ID s2 = stateVars.at(1);
+
+    transitionFunctions.push_back(fsm->xor2(s1, s2));
+    transitionFunctions.push_back(
+        fsm->or2(
+            fsm->and2(fsm->neg(s1), fsm->neg(s2)),
+            s1
+        )
+    );
+
+    fsm->setTransitionFunctions(transitionFunctions);
+    fsm->setInitState({false, true});
+    EXPECT_EQ(fsm->isReachable({false, false}), false);    
+    EXPECT_EQ(fsm->isReachable({false, true}), true);    
+    EXPECT_EQ(fsm->isReachable({true, false}),  true);    
+    EXPECT_EQ(fsm->isReachable({true, true}),   true);    
+
+}
+
+
+TEST_F(ReachabilityTest31, isReachableTest){
+
+    BDD_ID s1 = stateVars.at(0);
+    BDD_ID s2 = stateVars.at(1);
+    BDD_ID s3 = stateVars.at(2);
+    BDD_ID x  = inputVars.at(0);
+
+    transitionFunctions.push_back(
+        fsm->or2(
+            fsm->or2(
+                fsm->and2(
+                    s1,
+                    fsm->and2(fsm->neg(s2), fsm->neg(s3))
+                ),
+                fsm->and2(
+                    x,
+                    fsm->and2(s1, fsm->neg(s2))
+                )
+            ), 
+            fsm->or2(
+                fsm->and2(
+                    fsm->neg(x),
+                    fsm->and2(s2,s3)
+                ),
+                fsm->and2(
+                    s1,
+                    fsm->and2(s2, s3)
+                )
+            )       
+        )
+    );
+
+    transitionFunctions.push_back(
+        fsm->or2(
+            fsm->or2(
+                fsm->and2(
+                    fsm->neg(s1),
+                    fsm->and2(fsm->neg(s2), s3)
+                ),
+                fsm->and2(
+                    fsm->neg(s1),
+                    fsm->and2(s2, fsm->neg(s3))
+                )
+            ), 
+            fsm->or2(
+                fsm->and2(x, s3),
+                fsm->and2(x, fsm->neg(s1))
+            )       
+        )
+    );   
+
+    transitionFunctions.push_back(
+        fsm->or2(
+            fsm->or2(
+                fsm->and2(
+                    s1,
+                    fsm->and2(s2, fsm->neg(s3))
+                ),
+                fsm->and2(
+                    fsm->neg(s1),
+                    fsm->and2(s3, fsm->neg(s2))
+                )
+            ), 
+            fsm->and2(
+                fsm->neg(x),
+                fsm->and2(fsm->neg(s1),fsm->neg(s2))
+            )            
+        )
+    );    
+
+    fsm->setTransitionFunctions(transitionFunctions);
+
+    fsm->setInitState({false, false, false});
+    EXPECT_EQ(fsm->isReachable({false, false, false}), true );
+    EXPECT_EQ(fsm->isReachable({false, false, true}), true);
+    EXPECT_EQ(fsm->isReachable({false, true, false}), true);
+    EXPECT_EQ(fsm->isReachable({false, true, true}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, false}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, true}), false);
+    EXPECT_EQ(fsm->isReachable({true, true, false}), false);
+    EXPECT_EQ(fsm->isReachable({true, true, true}), false);
+
+    fsm->setInitState({false, false, true});
+    EXPECT_EQ(fsm->isReachable({false, false, false}), false );
+    EXPECT_EQ(fsm->isReachable({false, false, true}), true);
+    EXPECT_EQ(fsm->isReachable({false, true, false}), true);
+    EXPECT_EQ(fsm->isReachable({false, true, true}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, false}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, true}), false);
+    EXPECT_EQ(fsm->isReachable({true, true, false}), false);
+    EXPECT_EQ(fsm->isReachable({true, true, true}), false);
+
+    fsm->setInitState({false, true, false});
+    EXPECT_EQ(fsm->isReachable({false, false, false}), false );
+    EXPECT_EQ(fsm->isReachable({false, false, true}), false);
+    EXPECT_EQ(fsm->isReachable({false, true, false}), true);
+    EXPECT_EQ(fsm->isReachable({false, true, true}), false);
+    EXPECT_EQ(fsm->isReachable({true, false, false}), false);
+    EXPECT_EQ(fsm->isReachable({true, false, true}), false);
+    EXPECT_EQ(fsm->isReachable({true, true, false}), false);
+    EXPECT_EQ(fsm->isReachable({true, true, true}), false);
+
+    fsm->setInitState({false, true, true});
+    EXPECT_EQ(fsm->isReachable({false, false, false}), false );
+    EXPECT_EQ(fsm->isReachable({false, false, true}), false);
+    EXPECT_EQ(fsm->isReachable({false, true, false}), true);
+    EXPECT_EQ(fsm->isReachable({false, true, true}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, false}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, true}), false);
+    EXPECT_EQ(fsm->isReachable({true, true, false}), false);
+    EXPECT_EQ(fsm->isReachable({true, true, true}), false);
+
+    fsm->setInitState({true, false, false});
+    EXPECT_EQ(fsm->isReachable({false, false, false}), false );
+    EXPECT_EQ(fsm->isReachable({false, false, true}), false);
+    EXPECT_EQ(fsm->isReachable({false, true, false}), false);
+    EXPECT_EQ(fsm->isReachable({false, true, true}), false);
+    EXPECT_EQ(fsm->isReachable({true, false, false}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, true}), false);
+    EXPECT_EQ(fsm->isReachable({true, true, false}), false);
+    EXPECT_EQ(fsm->isReachable({true, true, true}), false);
+
+    fsm->setInitState({true, false, true});
+    EXPECT_EQ(fsm->isReachable({false, false, false}), true );
+    EXPECT_EQ(fsm->isReachable({false, false, true}), true);
+    EXPECT_EQ(fsm->isReachable({false, true, false}), true);
+    EXPECT_EQ(fsm->isReachable({false, true, true}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, false}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, true}), true);
+    EXPECT_EQ(fsm->isReachable({true, true, false}), true);
+    EXPECT_EQ(fsm->isReachable({true, true, true}), false);
+
+    fsm->setInitState({true, true, false});
+    EXPECT_EQ(fsm->isReachable({false, false, false}), false );
+    EXPECT_EQ(fsm->isReachable({false, false, true}), true);
+    EXPECT_EQ(fsm->isReachable({false, true, false}), true);
+    EXPECT_EQ(fsm->isReachable({false, true, true}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, false}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, true}), false);
+    EXPECT_EQ(fsm->isReachable({true, true, false}), true);
+    EXPECT_EQ(fsm->isReachable({true, true, true}), false);
+
+     fsm->setInitState({true, true, true});
+    EXPECT_EQ(fsm->isReachable({false, false, false}), false );
+    EXPECT_EQ(fsm->isReachable({false, false, true}), true);
+    EXPECT_EQ(fsm->isReachable({false, true, false}), true);
+    EXPECT_EQ(fsm->isReachable({false, true, true}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, false}), true);
+    EXPECT_EQ(fsm->isReachable({true, false, true}), false);
+    EXPECT_EQ(fsm->isReachable({true, true, false}), true);
+    EXPECT_EQ(fsm->isReachable({true, true, true}), true);
+}
 
 #endif
