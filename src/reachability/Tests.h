@@ -233,6 +233,13 @@ TEST_F(ReachabilityTest31, stateDistanceTest){
     EXPECT_EQ(fsm->stateDistance({false, true, true}),   3);
 }
 
+TEST_F(ReachabilityTest31, isReachableException){
+    EXPECT_THROW(
+        fsm->isReachable({false, false}),
+        std::runtime_error
+    );
+}
+
 TEST_F(ReachabilityTest20, isReachableTestBasic){
 
     BDD_ID s1 = stateVars.at(0);
